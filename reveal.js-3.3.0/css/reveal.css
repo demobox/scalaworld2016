@@ -1329,3 +1329,23 @@ html:-moz-full-screen-ancestor {
 
 .zoomed .reveal .roll span:after {
   visibility: hidden; }
+
+/**  DarkDimius modifications
+*/
+.reveal .footer {
+    position: absolute;
+    bottom: 1em;
+    left: 1em;
+    font-size: 0.9em;
+}
+
+.reveal .slides .epfl {
+    border: none;
+    margin: auto;
+    background: none;
+}
+
+
+.new-list-elem {
+  text-decoration: underline;
+}
