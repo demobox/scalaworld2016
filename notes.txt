@@ -9,12 +9,12 @@
   * Pick an Int, Any Int! - inherent (inheritance & JVM compat)?
   * Cast Away - inherent (JVM compat)?
   * Now You See Me, Now You Don't - inherent (inheritance)?
-  * Stringy Conversions - accidental (conciseness gone too far?)
-  * Think of 1 Card - accidental (undefined precedence rules?)?
-  * "varargs eta" - accidental (conciseness gone too far?)
-  * Applied Values - accidental (compiler optimization leaking out?)
-  * Init You, Init Me - ?
-  * A Listful of Dollars - ?
+  * Stringy Conversions - accidental (conciseness gone too far?) // after adding types to implicits, the example goes away
+  * Think of 1 Card - accidental (undefined precedence rules?)?  // decided to drop
+  * "varargs eta" - accidental (conciseness gone too far?)       // the same
+  * Applied Values - accidental (compiler optimization leaking out?) // both examples fail to compile
+  * Init You, Init Me - ?                                            // hotspot static fields
+  * A Listful of Dollars - ?                                         // first example fails to compile, second throws
 
 45-75min: What changes with Dotty?
     * Quick overview of which puzzlers are "slain" with and without -language:Scala2
