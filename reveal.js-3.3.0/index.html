@@ -127,6 +127,45 @@ println(map("key") == 0)
         <section data-markdown>
           <script type="text/template">
 ```
+trait A {
+  val foo: Int
+  val bar = 10
+  println("In A: foo: " + foo + ", bar: " + bar)
+}
+
+class B extends A {
+  val foo: Int = 25
+  println("In B: foo: " + foo + ", bar: " + bar)
+}
+
+class C extends B {
+  override val bar = 99
+  println("In C: foo: " + foo + ", bar: " + bar)
+}
+
+new C
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+```
+class A {
+  implicit val stringToInt = (_: String).toInt
+  println("4" - 2)
+}
+class B {
+  implicit val stringToInt: String => Int = _.toInt
+  println("4" - 2)
+}
+new A()
+new B()
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+```
 import scala.language.implicitConversions
 
 case class Card(number: Int, suit: String = "clubs") {
@@ -137,6 +176,65 @@ implicit val deck = List(Card(1, "clubs"))
 implicit def intToCard(n: Int) = Card(n)
 
 println(1.isInDeck)
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+```
+import language.implicitConversions
+trait RenderContext extends (StringContext => (Seq[Any] => String))
+
+implicit class MyCtxHelper(val sc: StringContext) extends AnyVal {
+  def my(args: Any*)(implicit rc: RenderContext) = rc(sc).apply(args)
+}
+
+val name = "Scala"
+val greeting = "I like your dots"
+
+{
+  implicit val useS =
+    new RenderContext { def apply(sc: StringContext) = sc.s _ }
+  println(my"Hello $name,\n$greeting!")
+}
+
+{
+  implicit val useSAgain =
+    new RenderContext { def apply(sc: StringContext) = sc.s(_) }
+  println(my"Hello $name,\n$greeting!")
+}
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+```
+object TheAnswer extends (() => Any) {
+  override val apply = () => 42
+}
+object TheVariableAnswer extends (() => Any) {
+  override val apply = () => 42
+  def apply(n: Int) = 42 * n
+}
+
+TheAnswer()
+TheVariableAnswer()
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+```
+object XY {
+  object X {
+    val value: Int = Y.value + 1
+  }
+  object Y {
+    val value: Int = X.value + 1
+  }
+}
+
+println(if (math.random > 0.5) XY.X.value else XY.Y.value)
 ```
           </script>
         </section>
