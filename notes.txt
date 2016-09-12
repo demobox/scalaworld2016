@@ -16,17 +16,29 @@
   * Init You, Init Me - ?
   * A Listful of Dollars - ?
 
-45-55min: What can you do today to make things better?
+45-75min: What changes with Dotty?
+    * Quick overview of which puzzlers are "slain" with and without -language:Scala2
+
+    * Dmitry's thoughts on whether it would make sense to try to get rid of more,
+       or whether that would be too much of a challenge from an engineering perspective,
+       or isn't important enough, or would present too much of a backwards-compatibility problem, or...?
+       * We would always like to get rig of some pandora boxes. For different reasons.
+          * Some are just making every other feature harder to implement: overloading
+          * Some are just harmful and not work. # projections.
+          * Some would bring you suprises in production, that are very hard to catch in tests
+            * performance
+            * memory leaks
+            * deadlocks
+       * No Auto-tupling. But it is actually needed for compatibility. We needed it and now you can disable it using an import.
+         one day we may decide to make this import default. Hi to spray and magnet pattern.
+       * No Structural types. Silent use of reflection.
+       * No early initialisers: http://scalapuzzlers.com/#pzzlr-043
+
+75-85min: What can you do today to make things better?
   * use a linter
   * have a style guide
   * use warnings
   * use compiler plugins
   * ...but these are all "opt-in", and that is always challenging
 
-55-60min: What changes with Dotty?
-  * Quick overview of which puzzlers are "slain" with and without -language:Scala2
-
-  * Dmitry's thoughts on whether it would make sense to try to get rid of more, or whether that would be too much of a challenge from an engineering perspective, or isn't important enough, or would present too much of a backwards-compatibility problem, or...?
-
-60-90min: The Death of DelayedInit
-  * All yours ;-)
+85-90min: Questions
