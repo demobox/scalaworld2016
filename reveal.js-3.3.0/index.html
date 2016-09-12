@@ -144,7 +144,7 @@ println(numbers) // "false3"
         <section data-markdown>
           <!-- Now You See Me, Now You Don't -->
           <script type="text/template">
-```
+```scala
 trait A {
   val foo: Int
   val bar = 10
@@ -168,7 +168,7 @@ new C
         <section data-markdown>
           <!-- Information Overload -->
           <script type="text/template">
-```
+```scala
 object Oh {
   def overloadA(u: Unit) = "I accept a Unit"
   def overloadA(u: Unit, n: Nothing) =
@@ -184,7 +184,7 @@ println(Oh overloadB 99)
         <section data-markdown>
           <!-- Pick an Int, Any Int! -->
           <script type="text/template">
-```
+```scala
 class A {
   type X // equivalent to X <: Any
   var x: X = _
@@ -202,7 +202,7 @@ println(bX)
         <section data-markdown>
           <!-- Cast Away -->
           <script type="text/template">
-```
+```scala
 import collection.JavaConverters._
 def fromJava: java.util.Map[String, java.lang.Integer] = {
   val map = new java.util.HashMap[String, java.lang.Integer]()
@@ -221,7 +221,7 @@ println(map("key") == 0)
         <section data-markdown>
           <!-- Init You, Init Me -->
           <script type="text/template">
-```
+```scala
 object XY {
   object X {
     val value: Int = Y.value + 1
@@ -238,7 +238,7 @@ println(if (math.random > 0.5) XY.X.value else XY.Y.value)
         <section data-markdown>
           <!-- Stringy Conversions -->
           <script type="text/template">
-```
+```scala
 class A {
   implicit val stringToInt = (_: String).toInt
   println("4" - 2)
@@ -255,7 +255,7 @@ new B()
         <section data-markdown>
           <!-- Repeat After Me -->
           <script type="text/template">
-```
+```scala
 import language.implicitConversions
 trait RenderContext extends (StringContext => (Seq[Any] => String))
 
@@ -284,7 +284,7 @@ val greeting = "I like your dots"
         <section data-markdown>
           <!-- Applied Values -->
           <script type="text/template">
-```
+```scala
 object TheAnswer extends (() => Any) {
   override val apply = () => 42
 }
@@ -301,7 +301,7 @@ TheVariableAnswer()
         <section data-markdown>
           <!-- A Listful of Dollars -->
           <script type="text/template">
-```
+```scala
 type Dollar = Int
 final val Dollar: Dollar = 1
 val a: List[Dollar] = List(1, 2, 3)
@@ -311,11 +311,6 @@ println(a.map(a: Int => Dollar))
 ```
           </script>
         </section>   <!-- Dotty: Unchanged-->
-        <section data-markdown>
-          <script type="text/template">
-          ### Enter Dotty
-          </script>
-        </section>
                 <section data-markdown>
                     <script type="text/template">
                         # Puzzlers of past are pandora boxes
@@ -362,7 +357,7 @@ println(a.map(a: Int => Dollar))
                 <section data-markdown>
                     <!-- Init You, Init Me -->
                     <script type="text/template">
-                        ```
+                        ```scala
                         trait C { type A }
 
                         type T = C { type A >: Any }
@@ -392,7 +387,7 @@ println(a.map(a: Int => Dollar))
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                        ```
+                          ```java
                           anon s = new Object(){
                               private final String name;
 
@@ -407,7 +402,7 @@ println(a.map(a: Int => Dollar))
                           catch (InvocationTargetException var4_4) {
                            throw var4_4.getCause();
                           }
-                        ```
+                          ```
                     </script>
                 </section>
                 <section data-markdown>
@@ -535,6 +530,7 @@ println(a.map(a: Int => Dollar))
 				progress: false,
 				transition: 'fade',
 				transitionSpeed: 'default',
+				slideNumber: 'c',
 
 				// More info https://github.com/hakimel/reveal.js#dependencies
 				dependencies: [
