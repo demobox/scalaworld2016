@@ -7,12 +7,10 @@
 		<title>Essential vs. Accidental Complexity in Scala &amp; Dotty: Towards a Puzzler-free Future?</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<!--<link rel="stylesheet" href="css/theme/white.css">-->
+		<link rel="stylesheet" href="css/theme/white.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/vs.css">
-        <link rel="stylesheet" href="css/theme/solarized.css" id="theme">
-        <link rel="stylesheet" href="js/highlight-themes/darkula.css">
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -70,10 +68,10 @@ println(numbers) // "false3"
           <em>What does that say about the language?</em></span></p>
         </section>
 				<section>
-          <p>Specifically: <span class="fragment highlight-blue"><em>Which of these puzzlers are the result of
-          essential vs. accidental complexity in the language?</em></span></p>
-          <p class="fragment">And: <span class="fragment highlight-blue"><em>Which, if any, might we be able to
-          eliminate in future?</em></span></p>
+          <p>Specifically: Which of these puzzlers are the result of
+          essential vs. accidental complexity in the language?</p>
+          <p class="fragment">And: Which, if any, might we be able to
+          eliminate in future?</p>
         </section>
         <section>
           <section>
@@ -97,8 +95,8 @@ println(numbers) // "false3"
           <p>Is this possible?
           <p class="fragment">Or is it inevitable that, in a language
           with sufficient expressive power and a non-trivial feature set,
-          there will always be interactions that result in behaviour that
-          the developer does not expect?</p>
+          <p class="fragment">there will always be interactions that 
+          result in behaviour that the developer does not expect?</p>
         </section>
         <section>
           <p>Perhaps it makes more sense to talk about which areas of
@@ -129,7 +127,56 @@ println(numbers) // "false3"
         </section>
         <section data-markdown>
           <script type="text/template">
-          ### Time for some <span class="fragment">(Semi-)</span>science
+          #### A "Puzzler Cluster Analysis"
+          
+          n = 66 puzzlers
+          </script>
+        </section>
+				<section>
+          <p>Object-orientation</p>
+          <p class="fragment">JVM &amp; Java compatibility</p>
+          <p class="fragment">Conciseness &amp; syntax sugar</p>
+          <p class="fragment">First-class functions</p>
+          <p class="fragment">Collections</p>
+        </section>
+        <section data-markdown>
+          <!-- Now You See Me, Now You Don't -->
+          <script type="text/template">
+```
+trait A {
+  val foo: Int
+  val bar = 10
+  println("In A: foo: " + foo + ", bar: " + bar)
+}
+
+class B extends A {
+  val foo: Int = 25
+  println("In B: foo: " + foo + ", bar: " + bar)
+}
+
+class C extends B {
+  override val bar = 99
+  println("In C: foo: " + foo + ", bar: " + bar)
+}
+
+new C
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Information Overload -->
+          <script type="text/template">
+```
+object Oh {
+  def overloadA(u: Unit) = "I accept a Unit"
+  def overloadA(u: Unit, n: Nothing) =
+  "I accept a Unit and Nothing"
+  def overloadB(n: Unit) = "I accept a Unit"
+  def overloadB(n: Nothing) = "I accept Nothing"
+}
+println(Oh overloadA 99)
+println(Oh overloadB 99)
+```
           </script>
         </section>
         <section data-markdown>
@@ -170,26 +217,19 @@ println(map("key") == 0)
           </script>
         </section>
         <section data-markdown>
-          <!-- Now You See Me, Now You Don't -->
+          <!-- Init You, Init Me -->
           <script type="text/template">
 ```
-trait A {
-  val foo: Int
-  val bar = 10
-  println("In A: foo: " + foo + ", bar: " + bar)
+object XY {
+  object X {
+    val value: Int = Y.value + 1
+  }
+  object Y {
+    val value: Int = X.value + 1
+  }
 }
 
-class B extends A {
-  val foo: Int = 25
-  println("In B: foo: " + foo + ", bar: " + bar)
-}
-
-class C extends B {
-  override val bar = 99
-  println("In C: foo: " + foo + ", bar: " + bar)
-}
-
-new C
+println(if (math.random > 0.5) XY.X.value else XY.Y.value)
 ```
           </script>
         </section>
@@ -211,22 +251,6 @@ new B()
           </script>
         </section>
         <section data-markdown>
-          <!-- Information Overload -->
-          <script type="text/template">
-```
-object Oh {
-  def overloadA(u: Unit) = "I accept a Unit"
-  def overloadA(u: Unit, n: Nothing) =
-  "I accept a Unit and Nothing"
-  def overloadB(n: Unit) = "I accept a Unit"
-  def overloadB(n: Nothing) = "I accept Nothing"
-}
-println(Oh overloadA 99)
-println(Oh overloadB 99)
-```
-          </script>
-        </section>
-        <section data-markdown>
           <!-- Repeat After Me -->
           <script type="text/template">
 ```
@@ -234,7 +258,8 @@ import language.implicitConversions
 trait RenderContext extends (StringContext => (Seq[Any] => String))
 
 implicit class MyCtxHelper(val sc: StringContext) extends AnyVal {
-  def my(args: Any*)(implicit rc: RenderContext) = rc(sc).apply(args)
+  def my(args: Any*)(implicit rc: RenderContext) = 
+    rc(sc).apply(args)
 }
 
 val name = "Scala"
@@ -272,19 +297,15 @@ TheVariableAnswer()
           </script>
         </section>
         <section data-markdown>
-          <!-- Init You, Init Me -->
+          <!-- A Listful of Dollars -->
           <script type="text/template">
 ```
-object XY {
-  object X {
-    val value: Int = Y.value + 1
-  }
-  object Y {
-    val value: Int = X.value + 1
-  }
-}
+type Dollar = Int
+final val Dollar: Dollar = 1
+val a: List[Dollar] = List(1, 2, 3)
 
-println(if (math.random > 0.5) XY.X.value else XY.Y.value)
+println(a map { a: Int => Dollar })
+println(a.map(a: Int => Dollar))
 ```
           </script>
         </section>
@@ -295,6 +316,11 @@ println(if (math.random > 0.5) XY.X.value else XY.Y.value)
         </section>
         <section>
           TODO
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### What can I do today?</span>
+          </script>
         </section>
 			</div>
 		</div>
