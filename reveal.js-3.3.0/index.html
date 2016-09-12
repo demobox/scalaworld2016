@@ -56,13 +56,18 @@ println(numbers) // "false3"
         </section>
 				<section>
           <p>Today is not about head-scratching puzzles</p>
-          <p class="fragment shrink">(Although we may sneak the odd one in here or there)</p>
+          <p class="fragment shrink">(Although we may sneak the odd one
+          in here or there)</p>
         </section>
 				<section>
           <p>Instead, we'd like to examine:</p>
-          <p class="fragment"><span class="fragment highlight-blue"><em>What can we learn from these puzzlers?</em></span></p>
-          <p class="fragment"><span class="fragment highlight-blue"><em>Are there any interesting groups or clusters we can detect?</em></span></p>
-          <p class="fragment"><span class="fragment highlight-blue"><em>What does that say about the language?</em></span></p>
+          <p class="fragment"><span class="fragment highlight-blue">
+          <em>What can we learn from these puzzlers?</em></span></p>
+          <p class="fragment"><span class="fragment highlight-blue">
+          <em>Are there any interesting groups or clusters we can detect?
+          </em></span></p>
+          <p class="fragment"><span class="fragment highlight-blue">
+          <em>What does that say about the language?</em></span></p>
         </section>
 				<section>
           <p>Specifically: <span class="fragment highlight-blue"><em>Which of these puzzlers are the result of
@@ -85,7 +90,37 @@ println(numbers) // "false3"
           </script>
         </section>
         <section>
-          TODO
+          <p>Ideally, we would like to have our cake and eat it too:</p>
+          <p class="fragment">We would like a language that is expressive, elegant <em>and</em> avoids counterintuitive behaviour</p>
+        </section>
+        <section>
+          <p>Is this possible?
+          <p class="fragment">Or is it inevitable that, in a language
+          with sufficient expressive power and a non-trivial feature set,
+          there will always be interactions that result in behaviour that
+          the developer does not expect?</p>
+        </section>
+        <section>
+          <p>Perhaps it makes more sense to talk about which areas of
+          complexity are an unavoidable price to pay for the power a
+          language offers...</p>
+          <p class="fragment">...as compared to &quot;weirdness&quot;
+          that is purely a result of specification or implementation
+          quirks</p>
+          <p class="fragment">...or of features that, in hindsight, 
+          caused more problems than they were worth</p>
+        </section>
+        <section>
+          <p>TL;DR</p>
+          <p class="fragment"><span class="fragment highlight-blue">
+          Essential complexity:</span> counterintuitive behaviour that
+          is an (almost) inevitable result of the interaction of
+          desirable language features</p>
+          <p class="fragment"><span class="fragment highlight-red">
+          Accidental complexity:</span> surprising behaviour that results
+          from implementation quirks, specification &quot;grey
+          areas&quot;, or language features that are no longer considered
+          relevant</p>
         </section>
         <section data-markdown>
           <script type="text/template">
@@ -93,6 +128,12 @@ println(numbers) // "false3"
           </script>
         </section>
         <section data-markdown>
+          <script type="text/template">
+          ### Time for some <span class="fragment">(Semi-)</span>science
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Pick an Int, Any Int! -->
           <script type="text/template">
 ```
 class A {
@@ -110,6 +151,7 @@ println(bX)
           </script>
         </section>     <!-- Dotty: Unchanged-->
         <section data-markdown>
+          <!-- Cast Away -->
           <script type="text/template">
 ```
 import collection.JavaConverters._
@@ -120,25 +162,129 @@ def fromJava: java.util.Map[String, java.lang.Integer] = {
 }
 
 // watch out here...Integer is not Int!
-val map = fromJava.asScala.asInstanceOf[scala.collection.Map[String, Int]]
+val map = fromJava.asScala.
+  asInstanceOf[scala.collection.Map[String, Int]]
 println(map("key") == null)
 println(map("key") == 0)
 ```
           </script>
         </section> <!-- Dotty: Unchanged-->
         <section data-markdown>
+          <!-- Now You See Me, Now You Don't -->
           <script type="text/template">
 ```
-import scala.language.implicitConversions
-
-case class Card(number: Int, suit: String = "clubs") {
-  val value = (number % 13) + 1 // ace = 1, king = 13
-  def isInDeck(implicit deck: List[Card]) = deck contains this
+trait A {
+  val foo: Int
+  val bar = 10
+  println("In A: foo: " + foo + ", bar: " + bar)
 }
-implicit val deck = List(Card(1, "clubs"))
-implicit def intToCard(n: Int) = Card(n)
 
-println(1.isInDeck)
+class B extends A {
+  val foo: Int = 25
+  println("In B: foo: " + foo + ", bar: " + bar)
+}
+
+class C extends B {
+  override val bar = 99
+  println("In C: foo: " + foo + ", bar: " + bar)
+}
+
+new C
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Stringy Conversions -->
+          <script type="text/template">
+```
+class A {
+  implicit val stringToInt = (_: String).toInt
+  println("4" - 2)
+}
+class B {
+  implicit val stringToInt: String => Int = _.toInt
+  println("4" - 2)
+}
+new A()
+new B()
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Information Overload -->
+          <script type="text/template">
+```
+object Oh {
+  def overloadA(u: Unit) = "I accept a Unit"
+  def overloadA(u: Unit, n: Nothing) =
+  "I accept a Unit and Nothing"
+  def overloadB(n: Unit) = "I accept a Unit"
+  def overloadB(n: Nothing) = "I accept Nothing"
+}
+println(Oh overloadA 99)
+println(Oh overloadB 99)
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Repeat After Me -->
+          <script type="text/template">
+```
+import language.implicitConversions
+trait RenderContext extends (StringContext => (Seq[Any] => String))
+
+implicit class MyCtxHelper(val sc: StringContext) extends AnyVal {
+  def my(args: Any*)(implicit rc: RenderContext) = rc(sc).apply(args)
+}
+
+val name = "Scala"
+val greeting = "I like your dots"
+
+{
+  implicit val useS =
+    new RenderContext { def apply(sc: StringContext) = sc.s _ }
+  println(my"Hello $name,\n$greeting!")
+}
+
+{
+  implicit val useSAgain =
+    new RenderContext { def apply(sc: StringContext) = sc.s(_) }
+  println(my"Hello $name,\n$greeting!")
+}
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Applied Values -->
+          <script type="text/template">
+```
+object TheAnswer extends (() => Any) {
+  override val apply = () => 42
+}
+object TheVariableAnswer extends (() => Any) {
+  override val apply = () => 42
+  def apply(n: Int) = 42 * n
+}
+
+TheAnswer()
+TheVariableAnswer()
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Init You, Init Me -->
+          <script type="text/template">
+```
+object XY {
+  object X {
+    val value: Int = Y.value + 1
+  }
+  object Y {
+    val value: Int = X.value + 1
+  }
+}
+
+println(if (math.random > 0.5) XY.X.value else XY.Y.value)
 ```
           </script>
         </section>   <!-- Dotty: Unchanged-->
