@@ -9,12 +9,12 @@
   * Pick an Int, Any Int! - inherent (inheritance & JVM compat)?
   * Cast Away - inherent (JVM compat)?
   * Now You See Me, Now You Don't - inherent (inheritance)?
-  * Stringy Conversions - accidental (conciseness gone too far?)
-  * Think of 1 Card - accidental (undefined precedence rules?)?
-  * "varargs eta" - accidental (conciseness gone too far?)
-  * Applied Values - accidental (compiler optimization leaking out?)
-  * Init You, Init Me - ?
-  * A Listful of Dollars - ?
+  * Stringy Conversions - accidental (conciseness gone too far?) // after adding types to implicits, the example goes away
+  * Think of 1 Card - accidental (undefined precedence rules?)?  // decided to drop
+  * "varargs eta" - accidental (conciseness gone too far?)       // the same
+  * Applied Values - accidental (compiler optimization leaking out?) // both examples fail to compile
+  * Init You, Init Me - ?                                            // hotspot static fields
+  * A Listful of Dollars - ?                                         // first example fails to compile, second throws
 
 45-75min: What changes with Dotty?
     * Quick overview of which puzzlers are "slain" with and without -language:Scala2
@@ -22,17 +22,19 @@
     * Dmitry's thoughts on whether it would make sense to try to get rid of more,
        or whether that would be too much of a challenge from an engineering perspective,
        or isn't important enough, or would present too much of a backwards-compatibility problem, or...?
-       * We would always like to get rig of some pandora boxes. For different reasons.
+       * We would always like to get rid of some pandora boxes. For different reasons.
           * Some are just making every other feature harder to implement: overloading
           * Some are just harmful and not work. # projections.
           * Some would bring you suprises in production, that are very hard to catch in tests
             * performance
             * memory leaks
             * deadlocks
+            * initialization order
        * No Auto-tupling. But it is actually needed for compatibility. We needed it and now you can disable it using an import.
          one day we may decide to make this import default. Hi to spray and magnet pattern.
        * No Structural types. Silent use of reflection.
        * No early initialisers: http://scalapuzzlers.com/#pzzlr-043
+       * final vals -> inline vals
 
 75-85min: What can you do today to make things better?
   * use a linter

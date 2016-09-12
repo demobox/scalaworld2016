@@ -196,7 +196,7 @@ val bX = b.x
 println(bX)
 ```
           </script>
-        </section>
+        </section>     <!-- Dotty: Unchanged-->
         <section data-markdown>
           <!-- Cast Away -->
           <script type="text/template">
@@ -215,7 +215,7 @@ println(map("key") == null)
 println(map("key") == 0)
 ```
           </script>
-        </section>
+        </section> <!-- Dotty: Unchanged-->
         <section data-markdown>
           <!-- Init You, Init Me -->
           <script type="text/template">
@@ -308,12 +308,210 @@ println(a map { a: Int => Dollar })
 println(a.map(a: Int => Dollar))
 ```
           </script>
-        </section>
+        </section>   <!-- Dotty: Unchanged-->
         <section data-markdown>
           <script type="text/template">
-          ### Enter Dotty</span>
+          ### Enter Dotty
           </script>
         </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        # Puzzlers of past are pandora boxes
+
+                        ## when newcomers open them, they may run away terrified
+                    </script>
+                </section>
+                <section>
+                   <img src="img/cat-in-box.jpg" width="600px">
+                    <h2>But some people made use of those pandora boxes</h2>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        # Closing the boxes
+
+                        For every box we close, we need to consider migration.
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        # Closing the boxes: Overloading
+
+                         - would simplify life a lot for compiler developers
+                         - people love this feature. This feature is here to stay.
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        # Puzzlers affect
+                         - typesystem
+                         - performance
+                         - memory leaks
+                         - initialization order
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        # Closing the boxes: Typechecking: Type projections
+
+                        - is a feature that breaks the code hard;
+                        - you can trust the type system;
+                    </script>
+                </section>
+                <section data-markdown>
+                    <!-- Init You, Init Me -->
+                    <script type="text/template">
+                        ```
+                        trait C { type A }
+
+                        type T = C { type A >: Any }
+                        type U = C { type A <: Nothing }
+
+                        type X = T & U
+
+                        val y: X#A = 1
+                        val z: String = y
+                        ```
+                        Type projection(`#`) is unsound.
+                        With it in the type-system, you can't trust the types.
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Closing the boxes: preformance & memory leaks: structural types
+
+                        - are very easy to write;
+                        - compile into reflection calls;
+
+                        ```
+                        val s = new Object {val name = "foo"}
+                        s.name
+                        ```
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ```
+                          anon s = new Object(){
+                              private final String name;
+
+                              public String name() {
+                                return this.name;
+                              }
+                          };
+                          try {
+                          (String)Test$.reflMethod$Method1(qual1.getClass())
+                            .invoke(qual1, new Object[0]);
+                          }
+                          catch (InvocationTargetException var4_4) {
+                           throw var4_4.getCause();
+                          }
+                        ```
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                      ```java
+                      class Test${
+                        public static final Test$ MODULE$;
+                        private static Class[] reflParams$Cache1;
+                        private static volatile SoftReference reflPoly$Cache1;
+
+                        public static Method reflMethod$Method1(Class x$1) {
+                          Method method1;
+                          MethodCache methodCache1 = (MethodCache)reflPoly$Cache1.get();
+                          if (methodCache1 == null) {
+                            methodCache1 = new EmptyMethodCache();
+                            reflPoly$Cache1 = new SoftReference<MethodCache>(methodCache1);
+                          }
+                          if ((method1 = methodCache1.find(x$1)) != null) {
+                            return method1;
+                          }
+                          method1 = ScalaRunTime..MODULE$.ensureAccessible(x$1.getMethod("name", reflParams$Cache1));
+                          reflPoly$Cache1 = new SoftReference<MethodCache>(methodCache1.add(x$1, method1));
+                          return method1;
+                        }
+                      }
+                      ```
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Closing the boxes: preformance & memory leaks: structural types
+
+                        - are very easy to write;
+                        - compile into reflection calls;
+
+                        ```
+                        val s = new Object {val name = "foo"}
+                        s.name
+                        ```
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Closing the boxes: initialization order
+
+                        ```scala
+                        trait A {
+                          val b = 1
+                          println(b)
+                        }
+
+                        class A1 extends A {
+                        } // prints 1
+
+                        class A2 extends A {
+                          override val b = 2
+                        } // prints 0
+
+                        class A3 extends A {
+                          override final val b = 3
+                        } // prints 3
+                        ```
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                    ## Closing the boxes: initialization order
+
+                    ```
+                    class A2 extends A {
+                    override val b = 2
+                    } // prints 0
+                    ```
+
+                    We have found that people rely on this behaviour without knowing this.
+                    We found it unfeasible to change it now.
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Closing the boxes: initialization order
+
+                        ```
+                        class A3 extends A {
+                          override final val b = 3
+                        } // prints 3
+                        ```
+
+                        We have mixed two questions - if member should be overriden,
+                        and if value should be inlined.
+
+                        Now we have @inline, that ignores initalization order.
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Closing the boxes: Auto-tupling
+
+                         - tried to get rid of Auto-tupling;
+                         - found out that stdlib relies on it;
+                         - spray introduced "Magnet" design-patter that relies on it;
+                         - need it to say;
+                         - can opt out using a language import. <!-- .element: class="fragment"  -->
+                    </script>
+                </section>
+
         <section>
           TODO
         </section>
