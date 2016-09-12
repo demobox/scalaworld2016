@@ -7,12 +7,10 @@
 		<title>Essential vs. Accidental Complexity in Scala &amp; Dotty: Towards a Puzzler-free Future?</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<!--<link rel="stylesheet" href="css/theme/white.css">-->
+		<link rel="stylesheet" href="css/theme/white.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/vs.css">
-        <link rel="stylesheet" href="css/theme/solarized.css" id="theme">
-        <link rel="stylesheet" href="js/highlight-themes/darkula.css">
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -36,6 +34,9 @@
 				<section>
           What is this all about?
         </section>
+				<section>
+          What is this all about?
+        </section>
         <section>
           <section>
             <p>Scala has lots of flexible features
@@ -44,6 +45,7 @@
             <p class="fragment">With great power comes great
             <strike>respons</strike>ability to shoot oneself in the 
             foot</p>
+            <p class="fragment"><img src="img/drop-bowling-ball.png" /></p>
           </section>
           <section data-markdown>
             <script type="text/template">
@@ -59,25 +61,24 @@ println(numbers) // "false3"
           <p class="fragment shrink">(Although we may sneak the odd one
           in here or there)</p>
         </section>
-				<section>
-          <p>Instead, we'd like to examine:</p>
-          <p class="fragment"><span class="fragment highlight-blue">
-          <em>What can we learn from these puzzlers?</em></span></p>
-          <p class="fragment"><span class="fragment highlight-blue">
-          <em>Are there any interesting groups or clusters we can detect?
-          </em></span></p>
-          <p class="fragment"><span class="fragment highlight-blue">
-          <em>What does that say about the language?</em></span></p>
+        <section data-markdown>
+          <script type="text/template">
+          Instead, we'd like to examine:
+          - What can we learn from these puzzlers? <!-- .element: class="fragment" -->
+          - Are there any interesting groups or clusters we can detect? <!-- .element: class="fragment" -->
+          - What does that say about the language? <!-- .element: class="fragment" -->
+          </script>
         </section>
 				<section>
-          <p>Specifically: Which of these puzzlers are the result of
+          <p><em>Specifically:</em> Which of these puzzlers are the result of
           essential vs. accidental complexity in the language?</p>
-          <p class="fragment">And: Which, if any, might we be able to
+          <p class="fragment"><em>And:</em> Which, if any, might we be able to
           eliminate in future?</p>
         </section>
         <section>
           <section>
-            The end of Scala Puzzlers?
+            <p>The end of Scala Puzzlers?</p>
+            <p class="fragment"><img src="img/empty-shelves.png" /></p>
           </section>
           <section>
             <p>Don't worry, we're ready ;-)</p>
@@ -86,18 +87,20 @@ println(numbers) // "false3"
         </section>
         <section data-markdown>
           <script type="text/template">
-          ### "Essential vs. Accidental Complexity"<span class="fragment">...quoi?</span>
+          ## "Essential vs. Accidental Complexity"<span class="fragment">...quoi?</span>
           </script>
         </section>
         <section>
-          <p>Ideally, we would like to have our cake and eat it too:</p>
-          <p class="fragment">We would like a language that is expressive, elegant <em>and</em> avoids counterintuitive behaviour</p>
+          <p>Ideally, we would like to have our cake and eat it too</p>
+          <p class="fragment"><img src="img/have-cake-eat-it-too.png" /></p>
         </section>
         <section>
-          <p>Is this possible?
+          <p>We would like a language that is expressive, elegant <em>and</em> avoids counterintuitive behaviour</p>
+          <p class="fragment">Is this possible?
           <p class="fragment">Or is it inevitable that, in a language
-          with sufficient expressive power and a non-trivial feature set,
-          <p class="fragment">there will always be interactions that 
+          with sufficient expressive power and a non-trivial feature
+          set...
+          <p class="fragment">...there will always be interactions that 
           result in behaviour that the developer does not expect?</p>
         </section>
         <section>
@@ -111,7 +114,7 @@ println(numbers) // "false3"
           caused more problems than they were worth</p>
         </section>
         <section>
-          <p>TL;DR</p>
+          <p><strong>TL;DR</strong></p>
           <p class="fragment"><span class="fragment highlight-blue">
           Essential complexity:</span> counterintuitive behaviour that
           is an (almost) inevitable result of the interaction of
@@ -124,475 +127,529 @@ println(numbers) // "false3"
         </section>
         <section data-markdown>
           <script type="text/template">
-          ### Time for some <span class="fragment">(Semi-)</span>science
+          ## Time for some <span class="fragment">(Semi-)</span>science
           </script>
         </section>
         <section data-markdown>
           <script type="text/template">
-          #### A "Puzzler Cluster Analysis"
+          ### A "Puzzler Cluster Analysis"
           
           n = 66 puzzlers
           </script>
         </section>
-				<section>
-          <p>Object-orientation</p>
-          <p class="fragment">JVM &amp; Java compatibility</p>
-          <p class="fragment">Conciseness &amp; syntax sugar</p>
-          <p class="fragment">First-class functions</p>
-          <p class="fragment">Collections</p>
+        <section data-markdown>
+          <script type="text/template">
+          - Object-orientation (~18%) <!-- .element: class="fragment" -->
+          - JVM &amp; Java compatibility (~14%) <!-- .element: class="fragment" -->
+          - First-class functions (~11%) <!-- .element: class="fragment" -->
+          - The type system (~15%) <!-- .element: class="fragment" -->
+          - Conciseness &amp; syntax sugar (~22%) <!-- .element: class="fragment" -->
+          - Collections (~20%) <!-- .element: class="fragment" -->
+          </script>
         </section>
         <section data-markdown>
           <!-- Now You See Me, Now You Don't -->
           <script type="text/template">
-```scala
-trait A {
-  val foo: Int
-  val bar = 10
-  println("In A: foo: " + foo + ", bar: " + bar)
-}
+          ```scala
+          trait A {
+            val foo: Int
+            val bar = 10
+            println("In A: foo: " + foo + ", bar: " + bar)
+          }
 
-class B extends A {
-  val foo: Int = 25
-  println("In B: foo: " + foo + ", bar: " + bar)
-}
+          class B extends A {
+            val foo: Int = 25
+            println("In B: foo: " + foo + ", bar: " + bar)
+          }
 
-class C extends B {
-  override val bar = 99
-  println("In C: foo: " + foo + ", bar: " + bar)
-}
+          class C extends B {
+            override val bar = 99
+            println("In C: foo: " + foo + ", bar: " + bar)
+          }
 
-new C
-```
+          new C
+          ```
           </script>
         </section>
         <section data-markdown>
           <!-- Information Overload -->
           <script type="text/template">
-```scala
-object Oh {
-  def overloadA(u: Unit) = "I accept a Unit"
-  def overloadA(u: Unit, n: Nothing) =
-  "I accept a Unit and Nothing"
-  def overloadB(n: Unit) = "I accept a Unit"
-  def overloadB(n: Nothing) = "I accept Nothing"
-}
-println(Oh overloadA 99)
-println(Oh overloadB 99)
-```
+          ```scala
+          object Oh {
+            def overloadA(u: Unit) = "I accept a Unit"
+            def overloadA(u: Unit, n: Nothing) =
+            "I accept a Unit and Nothing"
+            def overloadB(n: Unit) = "I accept a Unit"
+            def overloadB(n: Nothing) = "I accept Nothing"
+          }
+          println(Oh overloadA 99)
+          println(Oh overloadB 99)
+          ```
           </script>
         </section>
         <section data-markdown>
           <!-- Pick an Int, Any Int! -->
           <script type="text/template">
-```scala
-class A {
-  type X // equivalent to X <: Any
-  var x: X = _
-}
-class B extends A {
-  type X = Int
-}
-val b = new B
-println(b.x)
-val bX = b.x
-println(bX)
-```
+          ```scala
+          class A {
+            type X // equivalent to X <: Any
+            var x: X = _
+          }
+          class B extends A {
+            type X = Int
+          }
+          val b = new B
+          println(b.x)
+          val bX = b.x
+          println(bX)
+          ```
           </script>
         </section>     <!-- Dotty: Unchanged-->
         <section data-markdown>
           <!-- Cast Away -->
           <script type="text/template">
-```scala
-import collection.JavaConverters._
-def fromJava: java.util.Map[String, java.lang.Integer] = {
-  val map = new java.util.HashMap[String, java.lang.Integer]()
-  map.put("key", null)
-  map
-}
+          ```scala
+          import collection.JavaConverters._
+          def fromJava: java.util.Map[String, java.lang.Integer] = {
+            val map = new java.util.HashMap[String, java.lang.Integer]()
+            map.put("key", null)
+            map
+          }
 
-// watch out here...Integer is not Int!
-val map = fromJava.asScala.
-  asInstanceOf[scala.collection.Map[String, Int]]
-println(map("key") == null)
-println(map("key") == 0)
-```
+          // watch out here...Integer is not Int!
+          val map = fromJava.asScala.
+            asInstanceOf[scala.collection.Map[String, Int]]
+          println(map("key") == null)
+          println(map("key") == 0)
+          ```
           </script>
         </section> <!-- Dotty: Unchanged-->
         <section data-markdown>
           <!-- Init You, Init Me -->
           <script type="text/template">
-```scala
-object XY {
-  object X {
-    val value: Int = Y.value + 1
-  }
-  object Y {
-    val value: Int = X.value + 1
-  }
-}
+          ```scala
+          object XY {
+            object X {
+              val value: Int = Y.value + 1
+            }
+            object Y {
+              val value: Int = X.value + 1
+            }
+          }
 
-println(if (math.random > 0.5) XY.X.value else XY.Y.value)
-```
-          </script>
-        </section>
-        <section data-markdown>
-          <!-- Stringy Conversions -->
-          <script type="text/template">
-```scala
-class A {
-  implicit val stringToInt = (_: String).toInt
-  println("4" - 2)
-}
-class B {
-  implicit val stringToInt: String => Int = _.toInt
-  println("4" - 2)
-}
-new A()
-new B()
-```
-          </script>
-        </section>
-        <section data-markdown>
-          <!-- Repeat After Me -->
-          <script type="text/template">
-```scala
-import language.implicitConversions
-trait RenderContext extends (StringContext => (Seq[Any] => String))
-
-implicit class MyCtxHelper(val sc: StringContext) extends AnyVal {
-  def my(args: Any*)(implicit rc: RenderContext) = 
-    rc(sc).apply(args)
-}
-
-val name = "Scala"
-val greeting = "I like your dots"
-
-{
-  implicit val useS =
-    new RenderContext { def apply(sc: StringContext) = sc.s _ }
-  println(my"Hello $name,\n$greeting!")
-}
-
-{
-  implicit val useSAgain =
-    new RenderContext { def apply(sc: StringContext) = sc.s(_) }
-  println(my"Hello $name,\n$greeting!")
-}
-```
+          println(if (math.random > 0.5) XY.X.value else XY.Y.value)
+          ```
           </script>
         </section>
         <section data-markdown>
           <!-- Applied Values -->
           <script type="text/template">
-```scala
-object TheAnswer extends (() => Any) {
-  override val apply = () => 42
-}
-object TheVariableAnswer extends (() => Any) {
-  override val apply = () => 42
-  def apply(n: Int) = 42 * n
-}
+          ```
+          object TheAnswer extends (() => Any) {
+            override val apply = () => 42
+          }
+          object TheVariableAnswer extends (() => Any) {
+            override val apply = () => 42
+            def apply(n: Int) = 42 * n
+          }
 
-TheAnswer()
-TheVariableAnswer()
-```
+          TheAnswer()
+          TheVariableAnswer()
+          ```
           </script>
         </section>
         <section data-markdown>
           <!-- A Listful of Dollars -->
           <script type="text/template">
-```scala
-type Dollar = Int
-final val Dollar: Dollar = 1
-val a: List[Dollar] = List(1, 2, 3)
+          ```
+          type Dollar = Int
+          final val Dollar: Dollar = 1
+          val a: List[Dollar] = List(1, 2, 3)
 
-println(a map { a: Int => Dollar })
-println(a.map(a: Int => Dollar))
-```
+          println(a map { a: Int => Dollar })
+          println(a.map(a: Int => Dollar))
+          ```
           </script>
         </section>   <!-- Dotty: Unchanged-->
-                <section data-markdown>
-                    <script type="text/template">
-                        # Puzzlers of past are pandora boxes
+        <section data-markdown>
+          <!-- A Listful of Dollars -->
+          <script type="text/template">
+          ```
+          val (x, y) = (List(1, 3, 5), List(2, 4, 6)).
+            zipped find (_._1 > 10) getOrElse (10)
+          Console println s"Found $x"
+          ```
+          </script>
+        </section>   <!-- Dotty: Unchanged-->
+        <section data-markdown>
+          <!-- Repeat After Me -->
+          <script type="text/template">
+          ```
+          implicit class Padder(val sb: StringBuilder) extends AnyVal {
+            def pad2(width: Int) = {
+              1 to width - sb.length foreach { sb append '*' }
+              sb
+            }
+          }
 
-                        ## when newcomers open them, they may run away terrified
-                    </script>
-                </section>
-                <section>
-                   <img src="img/cat-in-box.jpg" width="600px">
-                    <h2>But some people made use of those pandora boxes</h2>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        # Closing the boxes
+          // greeting.length == 14
+          val greeting = new StringBuilder("Hello, kitteh!")
+          println(greeting pad2 20)
 
-                        For every box we close, we need to consider migration.
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        # Closing the boxes: Overloading
+          // farewell.length == 9
+          val farewell = new StringBuilder("U go now.")
+          println(farewell pad2 20)
+          ```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Stringy Conversions -->
+          <script type="text/template">
+          ```scala
+          class A {
+            implicit val stringToInt = (_: String).toInt
+            println("4" - 2)
+          }
+          class B {
+            implicit val stringToInt: String => Int = _.toInt
+            println("4" - 2)
+          }
+          new A()
+          new B()
+          ```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Repeat After Me -->
+          <script type="text/template">
+          ```scala
+          import language.implicitConversions
+          trait RenderContext extends (StringContext => (Seq[Any] => String))
 
-                         - would simplify life a lot for compiler developers
-                         - people love this feature. This feature is here to stay.
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        # Puzzlers affect
-                         - typesystem
-                         - performance
-                         - memory leaks
-                         - initialization order
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        # Closing the boxes: Typechecking: Type projections
+          implicit class MyCtxHelper(val sc: StringContext) extends AnyVal {
+            def my(args: Any*)(implicit rc: RenderContext) = 
+              rc(sc).apply(args)
+          }
 
-                        - is a feature that breaks the code hard;
-                        - you can trust the type system;
-                    </script>
-                </section>
-                <section data-markdown>
-                    <!-- Init You, Init Me -->
-                    <script type="text/template">
-                        ```scala
-                        trait C { type A }
+          val name = "Scala"
+          val greeting = "I like your dots"
 
-                        type T = C { type A >: Any }
-                        type U = C { type A <: Nothing }
+          {
+            implicit val useS =
+              new RenderContext { def apply(sc: StringContext) = sc.s _ }
+            println(my"Hello $name,\n$greeting!")
+          }
 
-                        type X = T & U
-
-                        val y: X#A = 1
-                        val z: String = y
-                        ```
-                        Type projection(`#`) is unsound.
-                        With it in the type-system, you can't trust the types.
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        ## Closing the boxes: preformance & memory leaks: structural types
-
-                        - are very easy to write;
-                        - compile into reflection calls;
-
-                        ```
-                        val s = new Object {val name = "foo"}
-                        s.name
-                        ```
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                          ```java
-                          anon s = new Object(){
-                              private final String name;
-
-                              public String name() {
-                                return this.name;
-                              }
-                          };
-                          try {
-                          (String)Test$.reflMethod$Method1(qual1.getClass())
-                            .invoke(qual1, new Object[0]);
-                          }
-                          catch (InvocationTargetException var4_4) {
-                           throw var4_4.getCause();
-                          }
-                          ```
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                      ```java
-                      class Test${
-                        public static final Test$ MODULE$;
-                        private static Class[] reflParams$Cache1;
-                        private static volatile SoftReference reflPoly$Cache1;
-
-                        public static Method reflMethod$Method1(Class x$1) {
-                          Method method1;
-                          MethodCache methodCache1 = (MethodCache)reflPoly$Cache1.get();
-                          if (methodCache1 == null) {
-                            methodCache1 = new EmptyMethodCache();
-                            reflPoly$Cache1 = new SoftReference<MethodCache>(methodCache1);
-                          }
-                          if ((method1 = methodCache1.find(x$1)) != null) {
-                            return method1;
-                          }
-                          method1 = ScalaRunTime..MODULE$.ensureAccessible(x$1.getMethod("name", reflParams$Cache1));
-                          reflPoly$Cache1 = new SoftReference<MethodCache>(methodCache1.add(x$1, method1));
-                          return method1;
-                        }
-                      }
-                      ```
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        ## Closing the boxes: preformance & memory leaks: structural types
-
-                        - are very easy to write;
-                        - compile into reflection calls;
-
-                        ```
-                        val s = new Object {val name = "foo"}
-                        s.name
-                        ```
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        ## Closing the boxes: initialization order
-
-                        ```scala
-                        trait A {
-                          val b = 1
-                          println(b)
-                        }
-
-                        class A1 extends A {
-                        } // prints 1
-
-                        class A2 extends A {
-                          override val b = 2
-                        } // prints 0
-
-                        class A3 extends A {
-                          override final val b = 3
-                        } // prints 3
-                        ```
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                    ## Closing the boxes: initialization order
-
-                    ```
-                    class A2 extends A {
-                    override val b = 2
-                    } // prints 0
-                    ```
-
-                    We have found that people rely on this behaviour without knowing this.
-                    We found it unfeasible to change it now.
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        ## Closing the boxes: initialization order
-
-                        ```
-                        class A3 extends A {
-                          override final val b = 3
-                        } // prints 3
-                        ```
-
-                        We have mixed two questions - if member should be overriden,
-                        and if value should be inlined.
-
-                        Now we have @inline, that ignores initalization order.
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        ## Closing the boxes: Auto-tupling
-
-                         - tried to get rid of Auto-tupling;
-                         - found out that stdlib relies on it;
-                         - spray introduced "Magnet" design-patter that relies on it;
-                         - need it to say;
-                         - can opt out using a language import. <!-- .element: class="fragment"  -->
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        ## Closing the boxes: Delayed Init
-
-                        ```scala
-                        object InitMain{
-                          def main(args: Array[String]): Unit = {
-                            val s = p
-                            val p = 1
-                            println(s)
-                          }
-                        }
-
-                        object InitApp extends App {
-                          val s = p
-                          val p = 1
-                          println(s)
-                        }
-                        ```
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        ## Closing the boxes: Delayed Init
-
-
-                        Classes and objects (but note, not traits)
-                        dirrectly or indirrectly inheriting the `DelayedInit` marker trait
-                        will have their initialization code rewritten as follows:
-                        ```
-                        class C extends DelayedInit {
-                         <code>
-                        }
-                        ```
-                        becomes
-                        ```
-                        class C extends DelayedInit {
-                             delayedInit(<code>)
-                         }
-                        ```
-                    </script>
-                </section>
-                    <section data-markdown>
-                        <script type="text/template">
-                            ## Closing the boxes: Delayed Init
-
-                            ```scala
-                            class C extends DelayedInit {
-                              def delayedInit(body: => Unit) = {}
-                            }
-                            class Injector {
-                              def test = {
-                                val name = ""
-                                class crash extends C {
-                                  println(name) // kills scalac
-                                }
-                              }
-                            }
-                            ```
-                        </script>
-                    </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        ## Closing the boxes: Delayed Init
-
-                        - Now this is deprecated.
-                        - In dotty, the same functionality can be achieved with trait arguments:
-
-                        ```scala
-                        trait NewDelayedInit(body: => Unit) {
-                          def delayedInit(body: => Unit) = {}
-
-                          delayedInit(body)
-                        }
-                        ```
-                    </script>
-                </section>
-
-
-        <section>
-          TODO
+          {
+            implicit val useSAgain =
+              new RenderContext { def apply(sc: StringContext) = sc.s(_) }
+            println(my"Hello $name,\n$greeting!")
+          }
+          ```
+          </script>
         </section>
         <section data-markdown>
           <script type="text/template">
-          ### What can I do today?</span>
+          ## Enter Dotty
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ## Puzzlers of the past are Pandora's boxes
+
+          ### When newcomers open them, they may run away terrified
+          </script>
+        </section>
+        <section>
+           <img src="img/cat-in-box.jpg" width="600" />
+           <h3>But some people made use of those Pandora's boxes</h3>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+            ## Closing the boxes
+
+            For every box we close, we need to consider migration
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Overloading
+
+           - would simplify life a lot for compiler developers
+           - people love this feature; this feature is here to stay
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Puzzlers affect
+           - typesystem
+           - performance
+           - memory leaks
+           - initialization order
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Typechecking - type projections
+
+          - is a feature that breaks the code hard
+          - you can trust the type system
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Init You, Init Me -->
+          <script type="text/template">
+          ```
+          trait C { type A }
+
+          type T = C { type A >: Any }
+          type U = C { type A <: Nothing }
+
+          type X = T & U
+
+          val y: X#A = 1
+          val z: String = y
+          ```
+          Type projection (`#`) is unsound.
+          With it in the type-system, you can't trust the types.
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Performance &amp; memory leaks - structural types
+
+          - are very easy to write
+          - compile into reflection calls
+
+          ```
+          val s = new Object { val name = "foo" }
+          s.name
+          ```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ```java
+          anon s = new Object() {
+            private final String name;
+
+            public String name() {
+              return this.name;
+            }
+          };
+          try {
+            (String)Test$.reflMethod$Method1(qual1.getClass())
+              .invoke(qual1, new Object[0]);
+          }
+          catch (InvocationTargetException var4_4) {
+            throw var4_4.getCause();
+          }
+          ```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ```java
+          class Test$ {
+            public static final Test$ MODULE$;
+            private static Class[] reflParams$Cache1;
+            private static volatile SoftReference reflPoly$Cache1;
+
+            public static Method reflMethod$Method1(Class x$1) {
+              Method method1;
+              MethodCache methodCache1 =
+                (MethodCache) reflPoly$Cache1.get();
+              if (methodCache1 == null) {
+                methodCache1 = new EmptyMethodCache();
+                reflPoly$Cache1 = 
+                  new SoftReference<MethodCache>(methodCache1);
+              }
+              if ((method1 = methodCache1.find(x$1)) != null) {
+                return method1;
+              }
+              method1 = ScalaRunTime..MODULE$.ensureAccessible(
+                x$1.getMethod("name", reflParams$Cache1));
+              reflPoly$Cache1 = new SoftReference<MethodCache>(
+                methodCache1.add(x$1, method1));
+              return method1;
+            }
+          }
+          ```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Initialization order
+
+          ```scala
+          trait A {
+            val b = 1
+            println(b)
+          }
+
+          class A1 extends A {
+          } // prints 1
+
+          class A2 extends A {
+            override val b = 2
+          } // prints 0
+
+          class A3 extends A {
+            override final val b = 3
+          } // prints 3
+          ```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Initialization order
+
+          ```
+          class A2 extends A {
+          override val b = 2
+          } // prints 0
+          ```
+
+          We have found that people rely on this behaviour without
+          knowing it.
+          We found it unfeasible to change at this moment.
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Initialization order
+
+          ```
+          class A3 extends A {
+            override final val b = 3
+          } // prints 3
+          ```
+
+          We are mixing two questions: if the member should be overriden,
+          and if the value should be inlined.
+
+          Now we have `@inline`, which ignores initialization order.
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Auto-tupling
+
+           - tried to get rid of auto-tupling
+           - found out that stdlib relies on it
+           - Spray introduced the "Magnet" design pattern that relies on it
+           - need it to stay
+           - can opt out using a language import <!-- .element: class="fragment" -->
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: DelayedInit
+
+          ```scala
+          object InitMain {
+            def main(args: Array[String]): Unit = {
+              val s = p
+              val p = 1
+              println(s)
+            }
+          }
+
+          object InitApp extends App {
+            val s = p
+            val p = 1
+            println(s)
+          }
+          ```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: DelayedInit
+
+          Classes and objects (but note, not traits) directly or
+          indirectly inheriting the `DelayedInit` marker trait
+          will have their initialization code rewritten as follows:
+          ```
+          class C extends DelayedInit {
+           <code>
+          }
+          ```
+          becomes
+          ```
+          class C extends DelayedInit {
+            delayedInit(<code>)
+          }
+          ```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: DelayedInit
+
+          ```scala
+          class C extends DelayedInit {
+            def delayedInit(body: => Unit) = {}
+          }
+          class Injector {
+            def test = {
+              val name = ""
+              class crash extends C {
+                println(name) // kills scalac
+              }
+            }
+          }
+          ```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: DelayedInit
+
+          - now this is deprecated
+          - in Dotty, the same functionality can be achieved with 
+            trait arguments:
+
+          ```scala
+          trait NewDelayedInit(body: => Unit) {
+            def delayedInit(body: => Unit) = {}
+
+            delayedInit(body)
+          }
+          ```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### OK, so...<span class="fragment">what can I do today?</span>
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          - Style guide
+          - Linter <!-- .element: class="fragment" -->
+          - Compiler plugins <!-- .element: class="fragment" -->
+          - Compiler options <!-- .element: class="fragment" -->
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          <p class="fragment current-visible">`-Xfatal-warnings`</p>
+          <p class="fragment">`-Xglobal-warming`
+            <img src="img/typhoon.png" width="600" />
+          </p>
+          </script>
+        </section>
+        <section>
+          <p>These are all &quot;opt-in&quot; choices...</p>
+          <p class="fragment">...and typically you only opt-in after it
+          goes wrong</p>
+          <p class="fragment">for the n-th time</br>
+          <img src="img/jenga-tower.png" /></p>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ## Questions?
           </script>
         </section>
 			</div>
@@ -605,7 +662,6 @@ println(a.map(a: Int => Dollar))
 			// More info https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
 				history: true,
-				progress: false,
 				transition: 'fade',
 				transitionSpeed: 'default',
 				slideNumber: 'c',
