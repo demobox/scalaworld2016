@@ -508,6 +508,84 @@ println(a.map(a: Int => Dollar))
                          - can opt out using a language import. <!-- .element: class="fragment"  -->
                     </script>
                 </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Closing the boxes: Delayed Init
+
+                        ```scala
+                        object InitMain{
+                          def main(args: Array[String]): Unit = {
+                            val s = p
+                            val p = 1
+                            println(s)
+                          }
+                        }
+
+                        object InitApp extends App {
+                          val s = p
+                          val p = 1
+                          println(s)
+                        }
+                        ```
+                    </script>
+                </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Closing the boxes: Delayed Init
+
+
+                        Classes and objects (but note, not traits)
+                        dirrectly or indirrectly inheriting the `DelayedInit` marker trait
+                        will have their initialization code rewritten as follows:
+                        ```
+                        class C extends DelayedInit {
+                         <code>
+                        }
+                        ```
+                        becomes
+                        ```
+                        class C extends DelayedInit {
+                             delayedInit(<code>)
+                         }
+                        ```
+                    </script>
+                </section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Closing the boxes: Delayed Init
+
+                            ```scala
+                            class C extends DelayedInit {
+                              def delayedInit(body: => Unit) = {}
+                            }
+                            class Injector {
+                              def test = {
+                                val name = ""
+                                class crash extends C {
+                                  println(name) // kills scalac
+                                }
+                              }
+                            }
+                            ```
+                        </script>
+                    </section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Closing the boxes: Delayed Init
+
+                        - Now this is deprecated.
+                        - In dotty, the same functionality can be achieved with trait arguments:
+
+                        ```scala
+                        trait NewDelayedInit(body: => Unit) {
+                          def delayedInit(body: => Unit) = {}
+
+                          delayedInit(body)
+                        }
+                        ```
+                    </script>
+                </section>
+
 
         <section>
           TODO
