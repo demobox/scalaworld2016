@@ -43,11 +43,13 @@
             <strike>respons</strike>ability to shoot oneself in the 
             foot</p>
           </section>
-          <section>
-            <pre><code data-trim data-noescape class="lang-scala">
+          <section data-markdown>
+            <script type="text/template">
+```
 val numbers = List("1", "2").toSet() + "3"
 println(numbers) // "false3"
-            </code></pre>
+```
+             </script>
           </section>
         </section>
 				<section>
@@ -88,8 +90,9 @@ println(numbers) // "false3"
           ### Time for some <span class="fragment">(Semi-)</span>science
           </script>
         </section>
-        <section>
-          <pre><code data-trim data-noescape class="lang-scala">
+        <section data-markdown>
+          <script type="text/template">
+```
 class A {
   type X // equivalent to X <: Any
   var x: X = _
@@ -101,10 +104,12 @@ val b = new B
 println(b.x)
 val bX = b.x
 println(bX)
-          </code></pre>
+```
+          </script>
         </section>
-        <section>
-          <pre><code data-trim data-noescape class="lang-scala">
+        <section data-markdown>
+          <script type="text/template">
+```
 import collection.JavaConverters._
 def fromJava: java.util.Map[String, java.lang.Integer] = {
   val map = new java.util.HashMap[String, java.lang.Integer]()
@@ -116,10 +121,12 @@ def fromJava: java.util.Map[String, java.lang.Integer] = {
 val map = fromJava.asScala.asInstanceOf[scala.collection.Map[String, Int]]
 println(map("key") == null)
 println(map("key") == 0)
-          </code></pre>
+```
+          </script>
         </section>
-        <section>
-          <pre><code data-trim data-noescape class="lang-scala">
+        <section data-markdown>
+          <script type="text/template">
+```
 import scala.language.implicitConversions
 
 case class Card(number: Int, suit: String = "clubs") {
@@ -130,7 +137,8 @@ implicit val deck = List(Card(1, "clubs"))
 implicit def intToCard(n: Int) = Card(n)
 
 println(1.isInDeck)
-          </code></pre>
+```
+          </script>
         </section>
         <section data-markdown>
           <script type="text/template">
