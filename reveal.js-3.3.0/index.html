@@ -503,7 +503,7 @@ println(a.map(a: Int => Dollar))
 
                          - tried to get rid of Auto-tupling;
                          - found out that stdlib relies on it;
-                         - spray introduced "Magnet" design-patter that relies on it;
+                         - spray introduced "Magnet" design-pattern that relies on it;
                          - need it to say;
                          - can opt out using a language import. <!-- .element: class="fragment"  -->
                     </script>
@@ -531,7 +531,7 @@ println(a.map(a: Int => Dollar))
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                        ## Closing the boxes: Delayed Init
+                        ## Closing the boxes: DelayedInit
 
 
                         Classes and objects (but note, not traits)
@@ -552,7 +552,7 @@ println(a.map(a: Int => Dollar))
                 </section>
                     <section data-markdown>
                         <script type="text/template">
-                            ## Closing the boxes: Delayed Init
+                            ## Closing the boxes: DelayedInit
 
                             ```scala
                             class C extends DelayedInit {
@@ -571,7 +571,7 @@ println(a.map(a: Int => Dollar))
                     </section>
                 <section data-markdown>
                     <script type="text/template">
-                        ## Closing the boxes: Delayed Init
+                        ## Closing the boxes: DelayedInit
 
                         - Now this is deprecated.
                         - In dotty, the same functionality can be achieved with trait arguments:
