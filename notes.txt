@@ -1,0 +1,19 @@
+0-5min: Intro, Agenda, Aim
+5-10min: What can we learn from looking at puzzlers?
+  * "cluster analysis" - are there features of the language that are especially puzzler-prone?
+  * inherent vs. accidental complexity - which potentially confusing parts could we avoid/get rid of vs. which seem unavoidable given the design goals of the language
+10-25min: A couple of examples
+  * Pick an Int, Any Int! - inherent (inheritance & JVM compat)?
+  * Cast Away - inherent (JVM compat)?
+  * Now You See Me, Now You Don't - inherent (inheritance)?
+  * Stringy Conversions - accidental (conciseness gone too far?)
+  * Think of 1 Card - accidental (undefined precedence rules?)?
+  * "varargs eta" - accidental (conciseness gone too far?)
+  * Applied Values - accidental (compiler optimization leaking out?)
+  * Init You, Init Me - ?
+  * A Listful of Dollars - ?
+25-30min: What changes with Dotty?
+  * Quick overview of which puzzlers are "slain" with and without -language:Scala2
+  * Dmitry's thoughts on whether it would make sense to try to get rid of more, or whether that would be too much of a challenge from an engineering perspective, or isn't important enough, or would present too much of a backwards-compatibility problem, or...?
+30-45min: The Death of DelayedInit
+  * All yours ;-)

@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Essential vs. Accidental Complexity in Scala &amp; Dotty: Towards a Puzzler-free Future?</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/vs.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+        <section data-markdown>
+          <script type="text/template">
+          ## Essential vs. Accidental Complexity in Scala &amp; Dotty
+          
+          #### Towards a Puzzler-free Future? <!-- .element: class="fragment" -->
+          </script>
+        </section>
+				<section>
+          What is this all about?
+        </section>
+        <section>
+          <section>
+            <p>Scala has lots of flexible features
+             <span class="fragment"> and attempts to combine many
+             powerful ideas</span></p>
+            <p class="fragment">With great power comes great
+            <strike>respons</strike>ability to shoot oneself in the 
+            foot</p>
+          </section>
+          <section>
+            <pre><code data-trim data-noescape class="lang-scala">
+val numbers = List("1", "2").toSet() + "3"
+println(numbers) // "false3"
+            </code></pre>
+          </section>
+        </section>
+				<section>
+          <p>Today is not about head-scratching puzzles</p>
+          <p class="fragment shrink">(Although we may sneak the odd one in here or there)</p>
+        </section>
+				<section>
+          <p>Instead, we'd like to examine:</p>
+          <p class="fragment"><span class="fragment highlight-blue"><em>What can we learn from these puzzlers?</em></span></p>
+          <p class="fragment"><span class="fragment highlight-blue"><em>Are there any interesting groups or clusters we can detect?</em></span></p>
+          <p class="fragment"><span class="fragment highlight-blue"><em>What does that say about the language?</em></span></p>
+        </section>
+				<section>
+          <p>Specifically: <span class="fragment highlight-blue"><em>Which of these puzzlers are the result of
+          essential vs. accidental complexity in the language?</em></span></p>
+          <p class="fragment">And: <span class="fragment highlight-blue"><em>Which, if any, might we be able to
+          eliminate in future?</em></span></p>
+        </section>
+        <section>
+          <section>
+            The end of Scala Puzzlers?
+          </section>
+          <section>
+            <p>Don't worry, we're ready ;-)</p>
+            <p class="fragment highlight-red grow">http://dottypuzzlers.com</p>
+          </section>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### "Essential vs. Accidental Complexity"<span class="fragment">...quoi?</span>
+          </script>
+        </section>
+        <section>
+          TODO
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Time for some <span class="fragment">(Semi-)</span>science
+          </script>
+        </section>
+        <section>
+          <pre><code data-trim data-noescape class="lang-scala">
+class A {
+  type X // equivalent to X <: Any
+  var x: X = _
+}
+class B extends A {
+  type X = Int
+}
+val b = new B
+println(b.x)
+val bX = b.x
+println(bX)
+          </code></pre>
+        </section>
+        <section>
+          <pre><code data-trim data-noescape class="lang-scala">
+import collection.JavaConverters._
+def fromJava: java.util.Map[String, java.lang.Integer] = {
+  val map = new java.util.HashMap[String, java.lang.Integer]()
+  map.put("key", null)
+  map
+}
+
+// watch out here...Integer is not Int!
+val map = fromJava.asScala.asInstanceOf[scala.collection.Map[String, Int]]
+println(map("key") == null)
+println(map("key") == 0)
+          </code></pre>
+        </section>
+        <section>
+          <pre><code data-trim data-noescape class="lang-scala">
+import scala.language.implicitConversions
+
+case class Card(number: Int, suit: String = "clubs") {
+  val value = (number % 13) + 1 // ace = 1, king = 13
+  def isInDeck(implicit deck: List[Card]) = deck contains this
+}
+implicit val deck = List(Card(1, "clubs"))
+implicit def intToCard(n: Int) = Card(n)
+
+println(1.isInDeck)
+          </code></pre>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Enter Dotty</span>
+          </script>
+        </section>
+        <section>
+          TODO
+        </section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+				progress: false,
+				transition: 'fade',
+				transitionSpeed: 'default',
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
