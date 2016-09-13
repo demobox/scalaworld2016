@@ -14,6 +14,9 @@
         <link rel="stylesheet" href="css/theme/solarized.css" id="theme">
         <link rel="stylesheet" href="js/highlight-themes/darkula.css">
 
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/vs.css">
+
 		<!-- Printing and PDF exports -->
 		<script>
 			var link = document.createElement( 'link' );
@@ -33,6 +36,27 @@
           #### Towards a Puzzler-free Future? <!-- .element: class="fragment" -->
           </script>
         </section>
+        <section data-markdown>
+          <script type="text/template">
+          <img data-src="img/andrew-phillips.jpg" style="float: right" />
+
+          ### About Andrew
+          
+          - A.P. but <u>not</u> A.P. Marki
+          - maintainer of Scala Puzzlers
+          - Infra Builder at x.ai
+          - we Magically Schedule Meetings, which is awesome!
+          
+          <img data-src="img/xai-logo.png" />
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### About Dmitry
+          
+          - TODO
+          </script>
+        </section>
 				<section>
           What is this all about?
         </section>
@@ -44,6 +68,7 @@
             <p class="fragment">With great power comes great
             <strike>respons</strike>ability to shoot oneself in the 
             foot</p>
+            <p class="fragment"><img data-src="img/drop-bowling-ball.png" /></p>
           </section>
           <section data-markdown>
             <script type="text/template">
@@ -59,25 +84,24 @@ println(numbers) // "false3"
           <p class="fragment shrink">(Although we may sneak the odd one
           in here or there)</p>
         </section>
-				<section>
-          <p>Instead, we'd like to examine:</p>
-          <p class="fragment"><span class="fragment highlight-blue">
-          <em>What can we learn from these puzzlers?</em></span></p>
-          <p class="fragment"><span class="fragment highlight-blue">
-          <em>Are there any interesting groups or clusters we can detect?
-          </em></span></p>
-          <p class="fragment"><span class="fragment highlight-blue">
-          <em>What does that say about the language?</em></span></p>
+        <section data-markdown>
+          <script type="text/template">
+          Instead, we'd like to examine:
+          - What can we learn from these puzzlers? <!-- .element: class="fragment" -->
+          - Are there any interesting groups or clusters we can detect? <!-- .element: class="fragment" -->
+          - What does that say about the language? <!-- .element: class="fragment" -->
+          </script>
         </section>
 				<section>
-          <p>Specifically: Which of these puzzlers are the result of
+          <p><em>Specifically:</em> Which of these puzzlers are the result of
           essential vs. accidental complexity in the language?</p>
-          <p class="fragment">And: Which, if any, might we be able to
+          <p class="fragment"><em>And:</em> Which, if any, might we be able to
           eliminate in future?</p>
         </section>
         <section>
           <section>
-            The end of Scala Puzzlers?
+            <p>The end of Scala Puzzlers?</p>
+            <p class="fragment"><img data-src="img/empty-shelves.png" /></p>
           </section>
           <section>
             <p>Don't worry, we're ready ;-)</p>
@@ -86,18 +110,20 @@ println(numbers) // "false3"
         </section>
         <section data-markdown>
           <script type="text/template">
-          ### "Essential vs. Accidental Complexity"<span class="fragment">...quoi?</span>
+          ## "Essential vs. Accidental Complexity"<span class="fragment">...quoi?</span>
           </script>
         </section>
         <section>
-          <p>Ideally, we would like to have our cake and eat it too:</p>
-          <p class="fragment">We would like a language that is expressive, elegant <em>and</em> avoids counterintuitive behaviour</p>
+          <p>Ideally, we would like to have our cake and eat it too</p>
+          <p class="fragment"><img data-src="img/have-cake-eat-it-too.png" /></p>
         </section>
         <section>
-          <p>Is this possible?
+          <p>We would like a language that is expressive, elegant <em>and</em> avoids counterintuitive behaviour</p>
+          <p class="fragment">Is this possible?
           <p class="fragment">Or is it inevitable that, in a language
-          with sufficient expressive power and a non-trivial feature set,
-          <p class="fragment">there will always be interactions that 
+          with sufficient expressive power and a non-trivial feature
+          set...
+          <p class="fragment">...there will always be interactions that 
           result in behaviour that the developer does not expect?</p>
         </section>
         <section>
@@ -111,7 +137,7 @@ println(numbers) // "false3"
           caused more problems than they were worth</p>
         </section>
         <section>
-          <p>TL;DR</p>
+          <p><strong>TL;DR</strong></p>
           <p class="fragment"><span class="fragment highlight-blue">
           Essential complexity:</span> counterintuitive behaviour that
           is an (almost) inevitable result of the interaction of
@@ -124,22 +150,25 @@ println(numbers) // "false3"
         </section>
         <section data-markdown>
           <script type="text/template">
-          ### Time for some <span class="fragment">(Semi-)</span>science
+          ## Time for some <span class="fragment">(Semi-)</span>science
           </script>
         </section>
         <section data-markdown>
           <script type="text/template">
-          #### A "Puzzler Cluster Analysis"
+          ### A "Puzzler Cluster Analysis"
           
           n = 66 puzzlers
           </script>
         </section>
-				<section>
-          <p>Object-orientation</p>
-          <p class="fragment">JVM &amp; Java compatibility</p>
-          <p class="fragment">Conciseness &amp; syntax sugar</p>
-          <p class="fragment">First-class functions</p>
-          <p class="fragment">Collections</p>
+        <section data-markdown>
+          <script type="text/template">
+          - Object-orientation (~18%) <!-- .element: class="fragment" -->
+          - JVM &amp; Java compatibility (~14%) <!-- .element: class="fragment" -->
+          - First-class functions (~11%) <!-- .element: class="fragment" -->
+          - The type system (~15%) <!-- .element: class="fragment" -->
+          - Conciseness &amp; syntax sugar (~22%) <!-- .element: class="fragment" -->
+          - Collections (~20%) <!-- .element: class="fragment" -->
+          </script>
         </section>
         <section data-markdown>
           <!-- Now You See Me, Now You Don't -->
@@ -236,6 +265,67 @@ println(if (math.random > 0.5) XY.X.value else XY.Y.value)
           </script>
         </section>
         <section data-markdown>
+          <!-- Applied Values -->
+          <script type="text/template">
+          ```
+          object TheAnswer extends (() => Any) {
+            override val apply = () => 42
+          }
+          object TheVariableAnswer extends (() => Any) {
+            override val apply = () => 42
+            def apply(n: Int) = 42 * n
+          }
+
+          TheAnswer()
+          TheVariableAnswer()
+          ```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- A Listful of Dollars -->
+          <script type="text/template">
+          ```
+          type Dollar = Int
+          final val Dollar: Dollar = 1
+          val a: List[Dollar] = List(1, 2, 3)
+
+          println(a map { a: Int => Dollar })
+          println(a.map(a: Int => Dollar))
+          ```
+          </script>
+        </section>   <!-- Dotty: Unchanged-->
+        <section data-markdown>
+          <!-- A Listful of Dollars -->
+          <script type="text/template">
+          ```
+          val (x, y) = (List(1, 3, 5), List(2, 4, 6)).
+            zipped find (_._1 > 10) getOrElse (10)
+          Console println s"Found $x"
+          ```
+          </script>
+        </section>   <!-- Dotty: Unchanged-->
+        <section data-markdown>
+          <!-- Repeat After Me -->
+          <script type="text/template">
+          ```
+          implicit class Padder(val sb: StringBuilder) extends AnyVal {
+            def pad2(width: Int) = {
+              1 to width - sb.length foreach { sb append '*' }
+              sb
+            }
+          }
+
+          // greeting.length == 14
+          val greeting = new StringBuilder("Hello, kitteh!")
+          println(greeting pad2 20)
+
+          // farewell.length == 9
+          val farewell = new StringBuilder("U go now.")
+          println(farewell pad2 20)
+          ```
+          </script>
+        </section>
+        <section data-markdown>
           <!-- Stringy Conversions -->
           <script type="text/template">
 ```scala
@@ -282,64 +372,39 @@ val greeting = "I like your dots"
           </script>
         </section>
         <section data-markdown>
-          <!-- Applied Values -->
           <script type="text/template">
-```scala
-object TheAnswer extends (() => Any) {
-  override val apply = () => 42
-}
-object TheVariableAnswer extends (() => Any) {
-  override val apply = () => 42
-  def apply(n: Int) = 42 * n
-}
-
-TheAnswer()
-TheVariableAnswer()
-```
+          ## Enter Dotty
           </script>
         </section>
         <section data-markdown>
-          <!-- A Listful of Dollars -->
-          <script type="text/template">
-```scala
-type Dollar = Int
-final val Dollar: Dollar = 1
-val a: List[Dollar] = List(1, 2, 3)
-
-println(a map { a: Int => Dollar })
-println(a.map(a: Int => Dollar))
-```
-          </script>
-        </section>   <!-- Dotty: Unchanged-->
-                <section data-markdown>
                     <script type="text/template">
-                        # Puzzlers of past are pandora boxes
+          ## Puzzlers of the past are Pandora's boxes
 
-                        ## when newcomers open them, they may run away terrified
+          ### When newcomers open them, they may run away terrified
                     </script>
                 </section>
                 <section>
-                   <img src="img/cat-in-box.jpg" width="600px">
-                    <h2>But some people made use of those pandora boxes</h2>
+           <img data-src="img/cat-in-box.jpg" width="600" />
+           <h3>But some people made use of those Pandora's boxes</h3>
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                        # Closing the boxes
+            ## Closing the boxes
 
-                        For every box we close, we need to consider migration.
+            For every box we close, we need to consider migration
                     </script>
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                        # Closing the boxes: Overloading
+          ### Closing the boxes: Overloading
 
                          - would simplify life a lot for compiler developers
-                         - people love this feature. This feature is here to stay.
+           - people love this feature; this feature is here to stay
                     </script>
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                        # Puzzlers affect
+          ### Puzzlers affect
                          - typesystem
                          - performance
                          - memory leaks
@@ -348,16 +413,16 @@ println(a.map(a: Int => Dollar))
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                        # Closing the boxes: Typechecking: Type projections
+          ### Closing the boxes: Typechecking - type projections
 
-                        - is a feature that breaks the code hard;
-                        - you can trust the type system;
+          - is a feature that breaks the code hard
+          - you can trust the type system
                     </script>
                 </section>
                 <section data-markdown>
                     <!-- Init You, Init Me -->
                     <script type="text/template">
-                        ```scala
+          ```
                         trait C { type A }
 
                         type T = C { type A >: Any }
@@ -374,10 +439,10 @@ println(a.map(a: Int => Dollar))
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                        ## Closing the boxes: preformance & memory leaks: structural types
+          ### Closing the boxes: Performance &amp; memory leaks - structural types
 
-                        - are very easy to write;
-                        - compile into reflection calls;
+          - are very easy to write
+          - compile into reflection calls
 
                         ```
                         val s = new Object {val name = "foo"}
@@ -415,16 +480,20 @@ println(a.map(a: Int => Dollar))
 
                         public static Method reflMethod$Method1(Class x$1) {
                           Method method1;
-                          MethodCache methodCache1 = (MethodCache)reflPoly$Cache1.get();
+              MethodCache methodCache1 =
+                (MethodCache) reflPoly$Cache1.get();
                           if (methodCache1 == null) {
                             methodCache1 = new EmptyMethodCache();
-                            reflPoly$Cache1 = new SoftReference<MethodCache>(methodCache1);
+                reflPoly$Cache1 = 
+                  new SoftReference<MethodCache>(methodCache1);
                           }
                           if ((method1 = methodCache1.find(x$1)) != null) {
                             return method1;
                           }
-                          method1 = ScalaRunTime..MODULE$.ensureAccessible(x$1.getMethod("name", reflParams$Cache1));
-                          reflPoly$Cache1 = new SoftReference<MethodCache>(methodCache1.add(x$1, method1));
+              method1 = ScalaRunTime..MODULE$.ensureAccessible(
+                x$1.getMethod("name", reflParams$Cache1));
+              reflPoly$Cache1 = new SoftReference<MethodCache>(
+                methodCache1.add(x$1, method1));
                           return method1;
                         }
                       }
@@ -433,20 +502,7 @@ println(a.map(a: Int => Dollar))
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                        ## Closing the boxes: preformance & memory leaks: structural types
-
-                        - are very easy to write;
-                        - compile into reflection calls;
-
-                        ```
-                        val s = new Object {val name = "foo"}
-                        s.name
-                        ```
-                    </script>
-                </section>
-                <section data-markdown>
-                    <script type="text/template">
-                        ## Closing the boxes: initialization order
+          ### Closing the boxes: Initialization order
 
                         ```scala
                         trait A {
@@ -469,7 +525,7 @@ println(a.map(a: Int => Dollar))
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                    ## Closing the boxes: initialization order
+          ### Closing the boxes: Initialization order
 
                     ```
                     class A2 extends A {
@@ -477,13 +533,14 @@ println(a.map(a: Int => Dollar))
                     } // prints 0
                     ```
 
-                    We have found that people rely on this behaviour without knowing this.
-                    We found it unfeasible to change it now.
+          We have found that people rely on this behaviour without
+          knowing it.
+          We found it unfeasible to change at this moment.
                     </script>
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                        ## Closing the boxes: initialization order
+          ### Closing the boxes: Initialization order
 
                         ```
                         class A3 extends A {
@@ -491,26 +548,26 @@ println(a.map(a: Int => Dollar))
                         } // prints 3
                         ```
 
-                        We have mixed two questions - if member should be overriden,
-                        and if value should be inlined.
+          We are mixing two questions: if the member should be overriden,
+          and if the value should be inlined.
 
-                        Now we have @inline, that ignores initalization order.
+          Now we have `@inline`, which ignores initialization order.
                     </script>
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                        ## Closing the boxes: Auto-tupling
+          ### Closing the boxes: Auto-tupling
 
-                         - tried to get rid of Auto-tupling;
-                         - found out that stdlib relies on it;
-                         - spray introduced "Magnet" design-pattern that relies on it;
-                         - need it to say;
-                         - can opt out using a language import. <!-- .element: class="fragment"  -->
+           - tried to get rid of auto-tupling
+           - found out that stdlib relies on it
+           - Spray introduced the "Magnet" design pattern that relies on it
+           - need it to stay
+           - can opt out using a language import <!-- .element: class="fragment" -->
                     </script>
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                        ## Closing the boxes: Delayed Init
+          ### Closing the boxes: DelayedInit
 
                         ```scala
                         object InitMain{
@@ -531,11 +588,10 @@ println(a.map(a: Int => Dollar))
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                        ## Closing the boxes: DelayedInit
+          ### Closing the boxes: DelayedInit
 
-
-                        Classes and objects (but note, not traits)
-                        dirrectly or indirrectly inheriting the `DelayedInit` marker trait
+          Classes and objects (but note, not traits) directly or
+          indirectly inheriting the `DelayedInit` marker trait
                         will have their initialization code rewritten as follows:
                         ```
                         class C extends DelayedInit {
@@ -552,7 +608,7 @@ println(a.map(a: Int => Dollar))
                 </section>
                     <section data-markdown>
                         <script type="text/template">
-                            ## Closing the boxes: DelayedInit
+          ### Closing the boxes: DelayedInit
 
                             ```scala
                             class C extends DelayedInit {
@@ -571,10 +627,11 @@ println(a.map(a: Int => Dollar))
                     </section>
                 <section data-markdown>
                     <script type="text/template">
-                        ## Closing the boxes: DelayedInit
+          ### Closing the boxes: DelayedInit
 
-                        - Now this is deprecated.
-                        - In dotty, the same functionality can be achieved with trait arguments:
+          - now this is deprecated
+          - in Dotty, the same functionality can be achieved with 
+            trait arguments:
 
                         ```scala
                         trait NewDelayedInit(body: => Unit) {
@@ -585,14 +642,44 @@ println(a.map(a: Int => Dollar))
                         ```
                     </script>
                 </section>
-
-
-        <section>
-          TODO
+        <section data-markdown>
+          <script type="text/template">
+          ### OK, so...<span class="fragment">what can I do today?</span>
+          </script>
         </section>
         <section data-markdown>
           <script type="text/template">
-          ### What can I do today?</span>
+          - Style guide
+          - Linter <!-- .element: class="fragment" -->
+          - Compiler plugins <!-- .element: class="fragment" -->
+          - Compiler options <!-- .element: class="fragment" -->
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          <p class="fragment current-visible">`-Xfatal-warnings`</p>
+          <p class="fragment">`-Xglobal-warming`
+            <img data-src="img/typhoon.png" width="600" />
+          </p>
+          </script>
+        </section>
+        <section>
+          <p>These are all &quot;opt-in&quot; choices...</p>
+          <p class="fragment">...and typically you only opt-in after it
+          goes wrong</p>
+          <p class="fragment">for the n-th time</br>
+          <img data-src="img/jenga-tower.png" /></p>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ## Try Dotty!
+
+          - TODO
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ## Questions?
           </script>
         </section>
 			</div>
@@ -605,7 +692,6 @@ println(a.map(a: Int => Dollar))
 			// More info https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({
 				history: true,
-				progress: false,
 				transition: 'fade',
 				transitionSpeed: 'default',
 				slideNumber: 'c',
