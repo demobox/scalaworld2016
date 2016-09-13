@@ -297,23 +297,6 @@ println(if (math.random > 0.5) XY.X.value else XY.Y.value)
 ```
           </script>
         </section>
-        <!--<section data-markdown>-->
-          <!--&lt;!&ndash; Applied Values &ndash;&gt;-->
-          <!--<script type="text/template">-->
-          <!--```scala-->
-          <!--object TheAnswer extends (() => Any) {-->
-            <!--override val apply = () => 42-->
-          <!--}-->
-          <!--object TheVariableAnswer extends (() => Any) {-->
-            <!--override val apply = () => 42-->
-            <!--def apply(n: Int) = 42 * n-->
-          <!--}-->
-
-          <!--TheAnswer()-->
-          <!--TheVariableAnswer()-->
-          <!--```-->
-          <!--</script>-->
-        <!--</section>-->
         <section data-markdown>
           <!-- A Listful of Dollars -->
           <script type="text/template">
@@ -383,37 +366,58 @@ new B()
 ```
           </script>
         </section>
-        <section data-markdown>
-          <!-- Repeat After Me -->
-          <script type="text/template">
-              ### Puzzler Source: Conciseness &amp; syntax sugar
+                <section data-markdown>
+                    <!-- Applied Values -->
+                    <script type="text/template">
+                        ### Puzzler Source: Conciseness &amp; syntax sugar
 
 ```scala
-import language.implicitConversions
-trait RenderContext extends (StringContext => (Seq[Any] => String))
+var x = 0
+def counter = { x += 1; x }
+def add(a: Int)(b: Int) = a + b
 
-implicit class MyCtxHelper(val sc: StringContext) extends AnyVal {
-  def my(args: Any*)(implicit rc: RenderContext) = 
-    rc(sc).apply(args)
-}
+val adder1 = add(counter)(_)
+val adder2 = add(counter) _
 
-val name = "Scala"
-val greeting = "I like your dots"
-
-{
-  implicit val useS =
-    new RenderContext { def apply(sc: StringContext) = sc.s _ }
-  println(my"Hello $name,\n$greeting!")
-}
-
-{
-  implicit val useSAgain =
-    new RenderContext { def apply(sc: StringContext) = sc.s(_) }
-  println(my"Hello $name,\n$greeting!")
-}
+println("x = " + x)
+println(adder1(10))
+println("x = " + x)
+println(adder2(10))
+println("x = " + x)
 ```
-          </script>
-        </section>
+                    </script>
+                </section>
+        <!--<section data-markdown>-->
+          <!--&lt;!&ndash; Repeat After Me &ndash;&gt;-->
+          <!--<script type="text/template">-->
+              <!--### Puzzler Source: Conciseness &amp; syntax sugar-->
+
+<!--```scala-->
+<!--import language.implicitConversions-->
+<!--trait RenderContext extends (StringContext => (Seq[Any] => String))-->
+
+<!--implicit class MyCtxHelper(val sc: StringContext) extends AnyVal {-->
+  <!--def my(args: Any*)(implicit rc: RenderContext) = -->
+    <!--rc(sc).apply(args)-->
+<!--}-->
+
+<!--val name = "Scala"-->
+<!--val greeting = "I like your dots"-->
+
+<!--{-->
+  <!--implicit val useS =-->
+    <!--new RenderContext { def apply(sc: StringContext) = sc.s _ }-->
+  <!--println(my"Hello $name,\n$greeting!")-->
+<!--}-->
+
+<!--{-->
+  <!--implicit val useSAgain =-->
+    <!--new RenderContext { def apply(sc: StringContext) = sc.s(_) }-->
+  <!--println(my"Hello $name,\n$greeting!")-->
+<!--}-->
+<!--```-->
+          <!--</script>-->
+        <!--</section>-->
         <section data-markdown>
           <script type="text/template">
           ## Enter Dotty
@@ -441,13 +445,13 @@ val greeting = "I like your dots"
                     <script type="text/template">
           ### Closing the boxes: Overloading
 
-                         - would simplify life a lot for compiler developers
+           - would simplify life a lot for compiler developers
            - people love this feature; this feature is here to stay
                     </script>
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-          ### Puzzlers affect
+                         ### Puzzlers affect
                          - typesystem
                          - performance
                          - memory leaks
@@ -465,7 +469,7 @@ val greeting = "I like your dots"
                 <section data-markdown>
                     <!-- Init You, Init Me -->
                     <script type="text/template">
-          ```
+                        ```
                         trait C { type A }
 
                         type T = C { type A >: Any }
@@ -476,8 +480,8 @@ val greeting = "I like your dots"
                         val y: X#A = 1
                         val z: String = y
                         ```
-                        Type projection(`#`) is unsound.
-                        With it in the type-system, you can't trust the types.
+                        - Type projection(`#`) is unsound.
+                        - With it in the type-system, you can't trust the types.
                     </script>
                 </section>
                 <section data-markdown>
@@ -487,10 +491,10 @@ val greeting = "I like your dots"
           - are very easy to write
           - compile into reflection calls
 
-                        ```
-                        val s = new Object {val name = "foo"}
-                        s.name
-                        ```
+          ```scala
+          val s = new Object {val name = "foo"}
+          s.name
+          ```
                     </script>
                 </section>
                 <section data-markdown>
@@ -515,37 +519,38 @@ val greeting = "I like your dots"
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-                      ```java
-                      class Test${
-                        public static final Test$ MODULE$;
-                        private static Class[] reflParams$Cache1;
-                        private static volatile SoftReference reflPoly$Cache1;
+```java
+class Test${
+  public static final Test$ MODULE$;
+  private static Class[] reflParams$Cache1;
+  private static volatile SoftReference reflPoly$Cache1;
 
-                        public static Method reflMethod$Method1(Class x$1) {
-                          Method method1;
-              MethodCache methodCache1 =
-                (MethodCache) reflPoly$Cache1.get();
-                          if (methodCache1 == null) {
-                            methodCache1 = new EmptyMethodCache();
-                reflPoly$Cache1 = 
-                  new SoftReference<MethodCache>(methodCache1);
-                          }
-                          if ((method1 = methodCache1.find(x$1)) != null) {
-                            return method1;
-                          }
-              method1 = ScalaRunTime..MODULE$.ensureAccessible(
-                x$1.getMethod("name", reflParams$Cache1));
-              reflPoly$Cache1 = new SoftReference<MethodCache>(
-                methodCache1.add(x$1, method1));
-                          return method1;
-                        }
-                      }
-                      ```
+  public static Method reflMethod$Method1(Class x$1) {
+    Method method1;
+    MethodCache methodCache1 =
+    (MethodCache) reflPoly$Cache1.get();
+    if (methodCache1 == null) {
+      methodCache1 = new EmptyMethodCache();
+      reflPoly$Cache1 =
+        new SoftReference<MethodCache>(methodCache1);
+    }
+    if ((method1 = methodCache1.find(x$1)) != null) {
+      return method1;
+    }
+    method1 = ScalaRunTime..MODULE$.ensureAccessible(
+      x$1.getMethod("name", reflParams$Cache1));
+    reflPoly$Cache1 = new SoftReference<MethodCache>(
+      methodCache1.add(x$1, method1)
+    );
+    return method1;
+  }
+}
+```
                     </script>
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-          ### Closing the boxes: Initialization order
+                        ### Closing the boxes: Initialization order
 
                         ```scala
                         trait A {
@@ -570,11 +575,11 @@ val greeting = "I like your dots"
                     <script type="text/template">
           ### Closing the boxes: Initialization order
 
-                    ```
-                    class A2 extends A {
-                    override val b = 2
-                    } // prints 0
-                    ```
+```scala
+class A2 extends A {
+  override val b = 2
+} // prints 0
+```
 
           We have found that people rely on this behaviour without
           knowing it.
@@ -585,11 +590,11 @@ val greeting = "I like your dots"
                     <script type="text/template">
           ### Closing the boxes: Initialization order
 
-                        ```
-                        class A3 extends A {
-                          override final val b = 3
-                        } // prints 3
-                        ```
+```scala
+class A3 extends A {
+  override final val b = 3
+} // prints 3
+```
 
           We are mixing two questions: if the member should be overriden,
           and if the value should be inlined.
@@ -601,16 +606,16 @@ val greeting = "I like your dots"
                     <script type="text/template">
           ### Closing the boxes: Auto-tupling
 
-           - tried to get rid of auto-tupling
-           - found out that stdlib relies on it
-           - Spray introduced the "Magnet" design pattern that relies on it
-           - need it to stay
-           - can opt out using a language import <!-- .element: class="fragment" -->
+           - tried to get rid of auto-tupling;
+           - found out that stdlib relies on it;
+           - Spray introduced the "Magnet" design pattern that relies on it;
+           - need it to stay;
+           - can opt out using a language import. <!-- .element: class="fragment" -->
                     </script>
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-          ### Closing the boxes: DelayedInit
+                        ### Closing the boxes: DelayedInit
 
                         ```scala
                         object InitMain{
@@ -631,12 +636,12 @@ val greeting = "I like your dots"
                 </section>
                 <section data-markdown>
                     <script type="text/template">
-          ### Closing the boxes: DelayedInit
+                        ### Closing the boxes: DelayedInit
 
-          Classes and objects (but note, not traits) directly or
-          indirectly inheriting the `DelayedInit` marker trait
+                        Classes and objects (but note, not traits) directly or
+                        indirectly inheriting the `DelayedInit` marker trait
                         will have their initialization code rewritten as follows:
-                        ```
+                        ```scala
                         class C extends DelayedInit {
                          <code>
                         }
@@ -651,7 +656,7 @@ val greeting = "I like your dots"
                 </section>
                     <section data-markdown>
                         <script type="text/template">
-          ### Closing the boxes: DelayedInit
+                            ### Closing the boxes: DelayedInit
 
                             ```scala
                             class C extends DelayedInit {
@@ -676,13 +681,13 @@ val greeting = "I like your dots"
           - in Dotty, the same functionality can be achieved with 
             trait arguments:
 
-                        ```scala
-                        trait NewDelayedInit(body: => Unit) {
-                          def delayedInit(body: => Unit) = {}
+          ```scala
+          trait NewDelayedInit(body: => Unit) {
+            def delayedInit(body: => Unit) = {}
 
-                          delayedInit(body)
-                        }
-                        ```
+            delayedInit(body)
+           }
+           ```
                     </script>
                 </section>
         <section data-markdown>
