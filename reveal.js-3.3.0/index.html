@@ -12,7 +12,7 @@
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/vs.css">
         <link rel="stylesheet" href="css/theme/solarized.css" id="theme">
-        <link rel="stylesheet" href="js/highlight-themes/darkula.css">
+        <!--<link rel="stylesheet" href="js/highlight-themes/dark">-->
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/vs.css">
@@ -54,10 +54,10 @@
                     <h2>About Dmitry:</h2>
                     <ul>
                         <li>https://github.com/darkdimius/</li>
-                        <li class="fragment">doing PhD at EPFL</li>
-                        <li class="fragment">previously worked on ScalaBlitz (up to 24x faster collections)</li>
-                        <li class="fragment">since March 2014 building on Dotty under supervision of Martin.</li>
-                        <li class="fragment">since March 2015 working on Dotty Linker and supervising others working on Dotty.</li>
+                        <li class="fragment1">doing PhD at EPFL</li>
+                        <li class="fragment1">previously worked on ScalaBlitz (up to 24x faster collections)</li>
+                        <li class="fragment1">since March 2014 building on Dotty under supervision of Martin.</li>
+                        <li class="fragment1">since March 2015 working on Dotty Linker and supervising others working on Dotty.</li>
                         <!--<li class="fragment">supervising:
                         <ul>
                             <li> Guillaume Martres: value classes and arrays of value classes</li>
@@ -80,7 +80,7 @@
           </section>
           <section data-markdown>
             <script type="text/template">
-```
+```scala
 val numbers = List("1", "2").toSet() + "3"
 println(numbers) // "false3"
 ```
@@ -173,7 +173,7 @@ println(numbers) // "false3"
           - Object-orientation (~18%) <!-- .element: class="fragment" -->
           - JVM &amp; Java compatibility (~14%) <!-- .element: class="fragment" -->
           - First-class functions (~11%) <!-- .element: class="fragment" -->
-          - The type system (~15%) <!-- .element: class="fragment" -->
+          - Type inference (~15%) <!-- .element: class="fragment" -->
           - Conciseness &amp; syntax sugar (~22%) <!-- .element: class="fragment" -->
           - Collections (~20%) <!-- .element: class="fragment" -->
           </script>
@@ -181,6 +181,7 @@ println(numbers) // "false3"
         <section data-markdown>
           <!-- Now You See Me, Now You Don't -->
           <script type="text/template">
+              ### Source: Object orientation
 ```scala
 trait A {
   val foo: Int
@@ -205,7 +206,9 @@ new C
         <section data-markdown>
           <!-- Information Overload -->
           <script type="text/template">
-```scala
+              ### Puzzler Source: Object orientation
+
+              ```scala
 object Oh {
   def overloadA(u: Unit) = "I accept a Unit"
   def overloadA(u: Unit, n: Nothing) =
@@ -221,6 +224,7 @@ println(Oh overloadB 99)
         <section data-markdown>
           <!-- Pick an Int, Any Int! -->
           <script type="text/template">
+              ### Puzzler Source: JVM & Any
 ```scala
 class A {
   type X // equivalent to X <: Any
@@ -229,16 +233,36 @@ class A {
 class B extends A {
   type X = Int
 }
+
 val b = new B
 println(b.x)
 val bX = b.x
 println(bX)
 ```
           </script>
-        </section>     <!-- Dotty: Unchanged-->
+        </section>
+                <section data-markdown>
+                    <!-- Pick an Int, Any Int! -->
+                    <script type="text/template">
+                        ### Puzzler Source: JVM & Any
+```scala
+class A {
+  type X // equivalent to X <: Any
+  var x: X = _
+}
+class B extends A {
+  type X = Int
+}
+
+val a: A = new B
+println(b.x)
+```
+                    </script>
+                </section>
         <section data-markdown>
           <!-- Cast Away -->
           <script type="text/template">
+              ### Puzzler Source: JVM & Any
 ```scala
 import collection.JavaConverters._
 def fromJava: java.util.Map[String, java.lang.Integer] = {
@@ -258,6 +282,7 @@ println(map("key") == 0)
         <section data-markdown>
           <!-- Init You, Init Me -->
           <script type="text/template">
+              ### Puzzler Source: JVM
 ```scala
 object XY {
   object X {
@@ -272,70 +297,78 @@ println(if (math.random > 0.5) XY.X.value else XY.Y.value)
 ```
           </script>
         </section>
-        <section data-markdown>
-          <!-- Applied Values -->
-          <script type="text/template">
-          ```
-          object TheAnswer extends (() => Any) {
-            override val apply = () => 42
-          }
-          object TheVariableAnswer extends (() => Any) {
-            override val apply = () => 42
-            def apply(n: Int) = 42 * n
-          }
+        <!--<section data-markdown>-->
+          <!--&lt;!&ndash; Applied Values &ndash;&gt;-->
+          <!--<script type="text/template">-->
+          <!--```scala-->
+          <!--object TheAnswer extends (() => Any) {-->
+            <!--override val apply = () => 42-->
+          <!--}-->
+          <!--object TheVariableAnswer extends (() => Any) {-->
+            <!--override val apply = () => 42-->
+            <!--def apply(n: Int) = 42 * n-->
+          <!--}-->
 
-          TheAnswer()
-          TheVariableAnswer()
-          ```
-          </script>
-        </section>
+          <!--TheAnswer()-->
+          <!--TheVariableAnswer()-->
+          <!--```-->
+          <!--</script>-->
+        <!--</section>-->
         <section data-markdown>
           <!-- A Listful of Dollars -->
           <script type="text/template">
-          ```
-          type Dollar = Int
-          final val Dollar: Dollar = 1
-          val a: List[Dollar] = List(1, 2, 3)
+              ### Puzzler Source: Type inference
 
-          println(a map { a: Int => Dollar })
-          println(a.map(a: Int => Dollar))
-          ```
+```scala
+type Dollar = Int
+final val Dollar: Dollar = 1
+val a: List[Dollar] = List(1, 2, 3)
+
+println(a map { a: Int => Dollar })
+println(a.map(a: Int => Dollar))
+```
           </script>
         </section>   <!-- Dotty: Unchanged-->
         <section data-markdown>
           <!-- A Listful of Dollars -->
           <script type="text/template">
-          ```
-          val (x, y) = (List(1, 3, 5), List(2, 4, 6)).
-            zipped find (_._1 > 10) getOrElse (10)
-          Console println s"Found $x"
-          ```
+              ### Puzzler Source: Type inference
+
+```scala
+val (x, y) = (List(1, 3, 5), List(2, 4, 6)).
+ zipped find (_._1 > 10) getOrElse (10)
+Console println s"Found $x"
+```
           </script>
         </section>   <!-- Dotty: Unchanged-->
         <section data-markdown>
           <!-- Repeat After Me -->
           <script type="text/template">
-          ```
-          implicit class Padder(val sb: StringBuilder) extends AnyVal {
-            def pad2(width: Int) = {
-              1 to width - sb.length foreach { sb append '*' }
-              sb
-            }
-          }
+              ### Puzzler Source: Conciseness &amp; syntax sugar
 
-          // greeting.length == 14
-          val greeting = new StringBuilder("Hello, kitteh!")
-          println(greeting pad2 20)
+```scala
+implicit class Padder(val sb: StringBuilder) extends AnyVal {
+  def pad2(width: Int) = {
+    1 to width - sb.length foreach { sb append '*' }
+    sb
+  }
+}
 
-          // farewell.length == 9
-          val farewell = new StringBuilder("U go now.")
-          println(farewell pad2 20)
-          ```
+// greeting.length == 14
+val greeting = new StringBuilder("Hello, kitteh!")
+println(greeting pad2 20)
+
+// farewell.length == 9
+val farewell = new StringBuilder("U go now.")
+println(farewell pad2 20)
+```
           </script>
         </section>
         <section data-markdown>
           <!-- Stringy Conversions -->
           <script type="text/template">
+              ### Puzzler Source: Conciseness &amp; syntax sugar
+
 ```scala
 class A {
   implicit val stringToInt = (_: String).toInt
@@ -353,6 +386,8 @@ new B()
         <section data-markdown>
           <!-- Repeat After Me -->
           <script type="text/template">
+              ### Puzzler Source: Conciseness &amp; syntax sugar
+
 ```scala
 import language.implicitConversions
 trait RenderContext extends (StringContext => (Seq[Any] => String))
