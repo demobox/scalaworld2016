@@ -1,0 +1,736 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Essential vs. Accidental Complexity in Scala &amp; Dotty: Towards a Puzzler-free Future?</title>
+
+    <link rel="stylesheet" href="css/reveal.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/vs.css">
+    <link rel="stylesheet" href="css/theme/solarized.css" id="theme">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/vs.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section data-markdown>
+          <script type="text/template">
+          ## Essential vs. Accidental Complexity in Scala &amp; Dotty
+          
+          #### Towards a Puzzler-free Future? <!-- .element: class="fragment" -->
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          <img data-src="img/apmarki.jpg" style="float: right" />
+
+          ### About Andrew
+
+          - A.P. but <u>not</u> A.P. Marki
+          - maintainer of Scala Puzzlers
+          - Infra Builder at x.ai
+          - we Magically Schedule Meetings, which is awesome!
+
+          <img data-src="img/xai-logo.png" />
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          <img data-src="img/apwashere.jpg" style="float: right" />
+
+          ### About Andrew
+
+          - A.P. but <u>not</u> A.P. Marki
+          - maintainer of Scala Puzzlers
+          - Infra Builder at x.ai
+          - we Magically Schedule Meetings, which is awesome!
+
+          <img data-src="img/xai-logo.png" />
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          <img data-src="img/darkdimius.jpg" style="float: right" />
+
+          ### About Dmitry
+
+          - [github.com/darkdimius](https://github.com/darkdimius/)
+          - Doing a PhD at EPFL
+          - Previously worked on ScalaBlitz (up to 24x faster collections)
+          - Since March 2014, building Dotty under supervision of Martin
+          - Since March 2015, working on Dotty Linker and supervising others working on Dotty
+          </script>
+        </section>
+        <section>
+          What is this all about?
+        </section>
+        <section>
+          <p>Scala has lots of flexible features
+           <span class="fragment"> and attempts to combine many
+           powerful ideas</span></p>
+          <p class="fragment">With great power comes great
+          <strike>respons</strike>ability to shoot oneself in the 
+          foot</p>
+          <p class="fragment"><img data-src="img/drop-bowling-ball.png" /></p>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+```scala
+val numbers = List("1", "2").toSet() + "3"
+println(numbers) // "false3"
+```
+           </script>
+        </section>
+        <section>
+          <p>Today is not about head-scratching puzzles</p>
+          <p class="fragment shrink">(Although we may sneak the odd one
+          in here or there)</p>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          Instead, we'd like to examine:
+          - What can we learn from these puzzlers? <!-- .element: class="fragment" -->
+          - Are there any interesting groups or clusters we can detect? <!-- .element: class="fragment" -->
+          - What does that say about the language? <!-- .element: class="fragment" -->
+          </script>
+        </section>
+        <section>
+          <p><em>Specifically:</em> Which of these puzzlers are the result of
+          essential vs. accidental complexity in the language?</p>
+          <p class="fragment"><em>And:</em> Which, if any, might we be able to
+          eliminate in future?</p>
+        </section>
+        <section>
+          <p>The end of Scala Puzzlers?</p>
+          <p><img data-src="img/empty-shelves.png" /></p>
+        </section>
+        <section>
+          <p>Don't worry, we're ready ;-)</p>
+          <p class="fragment grow"><a href="http://dottypuzzlers.com">dottypuzzlers.com</a></p>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ## "Essential vs. Accidental Complexity"<span class="fragment">...quoi?</span>
+          </script>
+        </section>
+        <section>
+          <p>Ideally, we would like to have our cake and eat it too</p>
+          <p><img data-src="img/have-cake-eat-it-too.png" /></p>
+        </section>
+        <section>
+          <p>We would like a language that is expressive, elegant <em>and</em> avoids counterintuitive behaviour</p>
+          <p class="fragment">Is this possible?
+          <p class="fragment">Or is it inevitable that, in a language
+          with sufficient expressive power and a non-trivial feature
+          set...
+          <p class="fragment">...there will always be interactions that 
+          result in behaviour that the developer does not expect?</p>
+        </section>
+        <section>
+          <p>Perhaps it makes more sense to talk about which areas of
+          complexity are an unavoidable price to pay for the power a
+          language offers...</p>
+          <p class="fragment">...as compared to &quot;weirdness&quot;
+          that is purely a result of specification or implementation
+          quirks</p>
+          <p class="fragment">...or of features that, in hindsight, 
+          caused more problems than they were worth</p>
+        </section>
+        <section>
+          <p><strong>TL;DR</strong></p>
+          <p class="fragment"><span class="fragment highlight-blue">
+          Essential complexity:</span> counterintuitive behaviour that
+          is an (almost) inevitable result of the interaction of
+          desirable language features</p>
+          <p class="fragment"><span class="fragment highlight-red">
+          Accidental complexity:</span> surprising behaviour that results
+          from implementation quirks, specification &quot;grey
+          areas&quot;, or language features that are no longer considered
+          relevant</p>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ## Time for some <span class="fragment">(Semi-)</span>science
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### A "Puzzler Cluster Analysis"
+          
+          n = 66 puzzlers
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          - Object-orientation (~18%) <!-- .element: class="fragment" -->
+          - JVM &amp; Java interop (~14%) <!-- .element: class="fragment" -->
+          - First-class functions (~11%) <!-- .element: class="fragment" -->
+          - Type inference (~15%) <!-- .element: class="fragment" -->
+          - Conciseness &amp; syntax sugar (~21%) <!-- .element: class="fragment" -->
+          - Collections (~19%) <!-- .element: class="fragment" -->
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Now You See Me, Now You Don't -->
+          <script type="text/template">
+          ### Object orientation
+```scala
+trait A {
+  val foo: Int
+  val bar = 10
+  println("In A: foo: " + foo + ", bar: " + bar)
+}
+
+class B extends A {
+  val foo: Int = 25
+  println("In B: foo: " + foo + ", bar: " + bar)
+}
+
+class C extends B {
+  override val bar = 99
+  println("In C: foo: " + foo + ", bar: " + bar)
+}
+
+new C // prints "In A: ... bar: 0"
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Information Overload -->
+          <script type="text/template">
+          ### Object orientation (2)
+```scala
+object Oh {
+  def overloadA(u: Unit) = "I accept a Unit"
+  def overloadA(u: Unit, n: Nothing) =
+  "I accept a Unit and Nothing"
+  def overloadB(n: Unit) = "I accept a Unit"
+  def overloadB(n: Nothing) = "I accept Nothing"
+}
+println(Oh overloadA 99) // compiles
+println(Oh overloadB 99) // does not compile
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Pick an Int, Any Int! -->
+          <script type="text/template">
+          ### JVM &amp; Java interop
+```scala
+class A {
+  type X // equivalent to X <: Any
+  var x: X = _
+}
+class B extends A {
+  type X = Int
+}
+
+val b = new B
+println(b.x) // prints "null" (!)
+val bX = b.x
+println(bX)
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Pick an Int, Any Int! -->
+          <script type="text/template">
+          ### JVM &amp; Java interop
+```scala
+class A {
+  type X // equivalent to X <: Any
+  var x: X = _
+}
+class B extends A {
+  type X = Int
+}
+
+val a: A = new B
+println(b.x)
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Cast Away -->
+          <script type="text/template">
+          ### JVM &amp; Java interop (2)
+```scala
+import collection.JavaConverters._
+def fromJava: java.util.Map[String, java.lang.Integer] = {
+  val map = new java.util.HashMap[String, java.lang.Integer]()
+  map.put("key", null)
+  map
+}
+
+// watch out here...Integer is not Int!
+val map = fromJava.asScala.
+  asInstanceOf[scala.collection.Map[String, Int]]
+println(map("key") == null) // prints "true"
+println(map("key") == 0) // prints "true"
+```
+          </script>
+        </section> <!-- Dotty: Unchanged-->
+        <section data-markdown>
+          <!-- Init You, Init Me -->
+          <script type="text/template">
+          ### JVM &amp; Java interop (3)
+```scala
+object XY {
+  object X {
+    val value: Int = Y.value + 1
+  }
+  object Y {
+    val value: Int = X.value + 1
+  }
+}
+// does not loop forever only due to JVM class initialization spec
+println(if (math.random > 0.5) XY.X.value else XY.Y.value)
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- A Listful of Dollars -->
+          <script type="text/template">
+          ### First-class functions
+```scala
+type Dollar = Int
+final val Dollar: Dollar = 1
+val a: List[Dollar] = List(1, 2, 3)
+
+println(a map { a: Int => Dollar }) // a map (_ => 1)
+println(a.map(a: Int => Dollar)) // a map a
+```
+          </script>
+        </section>   <!-- Dotty: Unchanged-->
+        <section data-markdown>
+          <!-- A Listful of Dollars -->
+          <script type="text/template">
+          ### Type inference
+```scala
+val (x, y) = (List(1, 3, 5), List(2, 4, 6)).
+ zipped find (_._1 > 10) getOrElse (10) // throws a MatchError
+Console println s"Found $x"
+```
+          </script>
+        </section>   <!-- Dotty: Unchanged-->
+        <section data-markdown>
+          <!-- Repeat After Me -->
+          <script type="text/template">
+          ### Conciseness &amp; syntax sugar
+```scala
+implicit class Padder(val sb: StringBuilder) extends AnyVal {
+  def pad2(width: Int) = {
+    // not the same as ... foreach { _ => sb append '*' }
+    1 to width - sb.length foreach { sb append '*' }
+    sb
+  }
+}
+
+// greeting.length == 14
+val greeting = new StringBuilder("Hello, kitteh!")
+println(greeting pad2 20)
+
+// farewell.length == 9
+val farewell = new StringBuilder("U go now.")
+println(farewell pad2 20)
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Stringy Conversions -->
+          <script type="text/template">
+          ### Conciseness &amp; syntax sugar (2)
+```scala
+class A {
+  // RHS becomes Predef.augmentString(_).toInt
+  implicit val stringToInt = (_: String).toInt
+  println("4" - 2)
+}
+class B {
+  // RHS becomes stringToInt(_).toInt
+  implicit val stringToInt: String => Int = _.toInt
+  println("4" - 2)
+}
+new A()
+new B()
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Applied Values -->
+          <script type="text/template">
+          ### Conciseness &amp; syntax sugar (3)
+```scala
+var x = 0
+def counter = { x += 1; x }
+def add(a: Int)(b: Int) = a + b
+
+val adder1 = add(counter)(_) // does not capture the value of counter
+val adder2 = add(counter) _ // captures the value of counter
+
+println("x = " + x)
+println(adder1(10))
+println("x = " + x)
+println(adder2(10))
+println("x = " + x)
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ## Enter Dotty
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ## Puzzlers of the past are Pandora's boxes
+
+          ### When newcomers open them, they may run away terrified
+          </script>
+        </section>
+        <section>
+         <img data-src="img/cat-in-box.jpg" width="600" />
+         <h3>But some people made use of those Pandora's boxes</h3>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ## Closing the boxes
+
+          For every box we close, we need to consider migration
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Overloading
+
+          - Removal would simplify life a lot for compiler developers
+          - People love this feature; this feature is here to stay
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Puzzlers affect
+          
+          - Type system
+          - Performance
+          - Memory usage
+          - Initialization order
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Typechecking - type projections
+
+          - A feature that seriously breaks the code
+          - You can't trust the type system
+          </script>
+        </section>
+        <section data-markdown>
+          <!-- Init You, Init Me -->
+          <script type="text/template">
+          ### Closing the boxes: Typechecking - type projections
+
+```scala
+trait C { type A }
+
+type T = C { type A >: Any }
+type U = C { type A <: Nothing }
+
+type X = T & U
+
+val y: X#A = 1
+val z: String = y
+```
+
+          - Type projection(`#`) is **unsound**
+          - With it in the type-system, you can't trust the types!
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Performance &amp; memory leaks - structural types
+
+```scala
+val s = new Object { val name = "foo" }
+s.name
+```
+          - Are very easy to write
+          - Compile into reflective calls
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+```java
+anon s = new Object() {
+    private final String name;
+
+    public String name() {
+      return this.name;
+    }
+};
+try {
+(String)Test$.reflMethod$Method1(qual1.getClass())
+  .invoke(qual1, new Object[0]);
+}
+catch (InvocationTargetException var4_4) {
+ throw var4_4.getCause();
+}
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+```java
+class Test$ {
+  public static final Test$ MODULE$;
+  private static Class[] reflParams$Cache1;
+  private static volatile SoftReference reflPoly$Cache1;
+
+  public static Method reflMethod$Method1(Class x$1) {
+    Method method1;
+    MethodCache methodCache1 =
+    (MethodCache) reflPoly$Cache1.get();
+    if (methodCache1 == null) {
+      methodCache1 = new EmptyMethodCache();
+      reflPoly$Cache1 =
+        new SoftReference<MethodCache>(methodCache1);
+    }
+    if ((method1 = methodCache1.find(x$1)) != null) {
+      return method1;
+    }
+    method1 = ScalaRunTime..MODULE$.ensureAccessible(
+      x$1.getMethod("name", reflParams$Cache1));
+    reflPoly$Cache1 = new SoftReference<MethodCache>(
+      methodCache1.add(x$1, method1)
+    );
+    return method1;
+  }
+}
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Initialization order
+
+```scala
+trait A {
+  val b = 1
+  println(b)
+}
+
+class A1 extends A {
+} // prints 1
+
+class A2 extends A {
+  override val b = 2
+} // prints 0
+
+class A3 extends A {
+  override final val b = 3
+} // prints 3
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Initialization order
+
+```scala
+class A2 extends A {
+  override val b = 2
+} // prints 0
+```
+
+          - People rely on this behaviour without knowing it
+          - Unfeasible to change at this moment
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Initialization order
+
+```scala
+class A3 extends A {
+  override final val b = 3
+} // prints 3
+```
+
+          - We are mixing two questions: "should the member be overriden", and "should the value be inlined"
+          - Now we have `@inline`, which ignores initialization order
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: Auto-tupling
+
+          - Tried to get rid of auto-tupling
+          - Found out that the standard library relies on it
+          - Spray introduced the "Magnet" design pattern that relies on it
+          - Need to keep it
+          - Can opt out using a language import <!-- .element: class="fragment" -->
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: DelayedInit
+
+```scala
+object InitMain{
+  def main(args: Array[String]): Unit = {
+    val s = p
+    val p = 1
+    println(s)
+  }
+}
+
+object InitApp extends App {
+  val s = p
+  val p = 1
+  println(s)
+}
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: DelayedInit
+
+          Classes and objects (but note, _not_ traits) directly or
+          indirectly inheriting the `DelayedInit` marker trait
+          will have their initialization code rewritten as follows:
+```scala
+class C extends DelayedInit {
+  <code>
+}
+```
+becomes
+```
+class C extends DelayedInit {
+  delayedInit(<code>)
+}
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: DelayedInit
+
+```scala
+class C extends DelayedInit {
+  def delayedInit(body: => Unit) = {}
+}
+class Injector {
+  def test = {
+    val name = ""
+    class crash extends C {
+      println(name) // kills scalac
+    }
+  }
+}
+```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### Closing the boxes: DelayedInit
+
+          - This is now deprecated
+          - In Dotty, the same functionality can be achieved with 
+            trait arguments:
+
+```scala
+trait NewDelayedInit(body: => Unit) {
+  def delayedInit(body: => Unit) = {}
+
+  delayedInit(body)
+ }
+ ```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ### OK, so...<span class="fragment">what can I do today?</span>
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          - Style guide
+          - Linter <!-- .element: class="fragment" -->
+          - Compiler plugins <!-- .element: class="fragment" -->
+          - Compiler options <!-- .element: class="fragment" -->
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          <p class="fragment current-visible">`-Xfatal-warnings`</p>
+          <p class="fragment">`-Xglobal-warming`
+            <img data-src="img/typhoon.png" width="600" />
+          </p>
+          </script>
+        </section>
+        <section>
+          <p>These are all &quot;opt-in&quot; choices...</p>
+          <p class="fragment">...and typically you only opt-in after it
+          goes wrong</p>
+          <p class="fragment">for the n-th time</br>
+          <img data-src="img/jenga-tower.png" /></p>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ## Learn from other puzzlers
+
+          [scalapuzzlers.com](http://scalapuzzlers.com)
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ## Try Dotty!
+
+          [dotty.epfl.ch](http://dotty.epfl.ch)
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+          ## Questions?
+          </script>
+        </section>
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+      // More info https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        history: true,
+        transition: 'fade',
+        transitionSpeed: 'default',
+        slideNumber: 'c',
+
+        // More info https://github.com/hakimel/reveal.js#dependencies
+        dependencies: [
+          { src: 'plugin/markdown/marked.js' },
+          { src: 'plugin/markdown/markdown.js' },
+          { src: 'plugin/notes/notes.js', async: true },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+        ]
+      });
+    </script>
+  </body>
+</html>

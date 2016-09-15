@@ -1,4 +1,3 @@
-
 0-5min: Intro, Agenda, Aim
 
 5-15min: What can we learn from looking at puzzlers?
